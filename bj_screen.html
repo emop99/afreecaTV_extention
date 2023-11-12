@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--TODO 타이틀 명 변경-->
+    <title></title>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <script defer src="https://static.afreecatv.com/asset/app/extension-helper/afreecatv-extension-sdk.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="/js/lib/bootstrap.js"></script>
+
+    <style>
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .fixed-bottom button {
+            width: 250px;
+        }
+
+        .center-block {
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        .table-container {
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        .custom-title {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        button.close {
+            padding-top: 30px;
+        }
+
+        .large-checkbox {
+            width: 20px;
+            height: 20px;
+        }
+
+        #raffle-detail-info-div table thead th.fix-column, table tbody td.fix-column {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="container top-container" id="main-div">
+    <h1 class="custom-title">추첨 리스트(BJ)</h1>
+    <div class="table-container">
+        <table class="table table-hover table-sm caption-top">
+            <thead class="table-light">
+            <tr>
+                <th scope="col" class="text-center">No.</th>
+                <th scope="col" class="text-center">제목</th>
+                <th scope="col" class="text-center">인원</th>
+                <th scope="col" class="text-center">현황</th>
+                <th scope="col" class="text-center">상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="raffle-list-tbody">
+            </tbody>
+        </table>
+    </div>
+    <div class="fixed-bottom text-center">
+        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-add-show-btn">추첨 추가하기</button>
+    </div>
+</div>
+<div class="container top-container" id="raffle-add-div" style="display: none;">
+    <h1 class="custom-title">신청 설정(BJ)</h1>
+    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
+
+    <div class="container">
+        <div class="input-group mb-3">
+            <span class="input-group-text">제목</span>
+            <input type="text" class="form-control" placeholder="제목을 입력해주세요." aria-label="제목" name="add-raffle-name">
+        </div>
+        <div id="raffle-add-column-div">
+        </div>
+    </div>
+
+    <div class="fixed-bottom text-center">
+        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-add-btn">완료</button>
+    </div>
+</div>
+<div class="container top-container" id="raffle-detail-info-div" style="display: none;">
+    <h1 class="custom-title"></h1>
+    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
+
+    <div class="input-group" style="margin-bottom: 20px;">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="검색어를 입력해주세요." id="raffle-search-input">
+    </div>
+
+    <div class="table-container">
+        <table class="table table-hover table-sm caption-top" id="raffle-detail-info-table">
+            <thead class="table-light" id="raffle-detail-info-thead">
+            </thead>
+            <tbody id="raffle-detail-info-tbody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="fixed-bottom text-center">
+    </div>
+</div>
+</body>
+
+<script type="module" src="/js/main_bj.js"></script>
+
+</html>
