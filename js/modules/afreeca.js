@@ -45,7 +45,6 @@ const oAfreeca = (() => {
             extensionSDK.handleError((error) => {
                 // 확장 프로그램을 불러오는 중 문제가 발생
                 console.log(error);
-                alert('확장 프로그램을 불러오는 중 문제가 발생하였습니다.');
             });
         },
         /**

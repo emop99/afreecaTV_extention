@@ -136,6 +136,13 @@ const oMain = (() => {
 
                 document.querySelector(selectorMap.raffleListTbody).innerHTML = template.raffleList();
             },
+            raffleListRefresh: () => {
+                if (RaffleListArray.length === 0) {
+                    document.querySelector(selectorMap.raffleListTbody).innerHTML = template.emptyRaffleList();
+                    return;
+                }
+                document.querySelector(selectorMap.raffleListTbody).innerHTML = template.raffleList();
+            },
             raffleAddShowProc: () => {
                 document.querySelector(selectorMap.raffleAddDiv).style.display = '';
                 document.querySelector(selectorMap.mainDiv).style.display = 'none';
@@ -145,7 +152,7 @@ const oMain = (() => {
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
-                    alert('해당 추첨 정보가 없습니다.');
+                    // alert('해당 추첨 정보가 없습니다.');
                     event.screenReset();
                     return;
                 }
@@ -176,6 +183,10 @@ const oMain = (() => {
             init: () => {
                 // 추첨 추가하기 버튼 클릭 이벤트
                 document.querySelector(selectorMap.raffleAddShowBtn).addEventListener('click', () => {
+                    if (RaffleListArray.length >= 5) {
+                        // alert('추첨은 최대 5개까지만 생성 가능합니다.');
+                        return;
+                    }
                     render.raffleAddShowProc();
                 });
 
@@ -186,7 +197,7 @@ const oMain = (() => {
                     let validate = true;
 
                     if (raffleName === '') {
-                        alert('추첨명을 입력해주세요.');
+                        // alert('추첨명을 입력해주세요.');
                         document.querySelector(selectorMap.raffleAddSubjectInput).focus();
                         return;
                     }
@@ -194,7 +205,7 @@ const oMain = (() => {
                     raffleColumnList.forEach((value, index) => {
                         if (value === '' && validate) {
                             validate = false;
-                            alert('추첨 열명을 입력해주세요.');
+                            // alert('추첨 열명을 입력해주세요.');
                             document.querySelectorAll(selectorMap.raffleAddColumnInput)[index].focus();
                         }
                     });
@@ -211,7 +222,7 @@ const oMain = (() => {
 
                     render.raffleList();
 
-                    api.raffleCreate();
+                    api.raffleCreate(RaffleListArray.length - 1, RaffleListArray[RaffleListArray.length - 1]);
                 });
 
                 // close button event
@@ -221,10 +232,15 @@ const oMain = (() => {
                     render.raffleList();
                 });
 
+                // 1초마다 추첨 리스트 갱신
+                setInterval(() => {
+                    render.raffleListRefresh();
+                }, 1000);
+
                 // 추첨 신청 열 제거
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnMinusBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 1) {
-                        alert('최소 1개 이상의 항목은 필요합니다.');
+                        // alert('최소 1개 이상의 항목은 필요합니다.');
                         return;
                     }
                     event.target.closest(selectorMap.raffleAddColumnInputDiv).remove();
@@ -284,9 +300,9 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleStartBtn}`, (e) => {
                     const {raffleNo} = e.target.dataset;
 
-                    if (!confirm('선택된 참여자로 추첨을 시작하시겠습니까?')) {
-                        return;
-                    }
+                    // if (!confirm('선택된 참여자로 추첨을 시작하시겠습니까?')) {
+                    //     return;
+                    // }
 
                     event.raffleProc(raffleNo);
                 });
@@ -297,13 +313,13 @@ const oMain = (() => {
                     const selectRaffleInfo = RaffleListArray[raffleNo];
 
                     if (!selectRaffleInfo) {
-                        alert('해당 추첨 정보가 없습니다.');
+                        // alert('해당 추첨 정보가 없습니다.');
                         event.screenReset();
                         return;
                     }
-                    if (!confirm('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.')) {
-                        return;
-                    }
+                    // if (!confirm('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.')) {
+                    //     return;
+                    // }
 
                     selectRaffleInfo.winnersInfo = [];
                     selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
@@ -338,22 +354,22 @@ const oMain = (() => {
                 let winnersInfo = [];
 
                 if (raffleInputCount === '') {
-                    alert('추첨 인원을 입력해주세요.');
+                    // alert('추첨 인원을 입력해주세요.');
                     document.querySelector(selectorMap.raffleInputCount).focus();
                     return;
                 }
                 if (raffleInputCount <= 0) {
-                    alert('추첨 인원을 1명 이상 입력해주세요.');
+                    // alert('추첨 인원을 1명 이상 입력해주세요.');
                     document.querySelector(selectorMap.raffleInputCount).focus();
                     return;
                 }
                 if (raffleInputCount > participantsInfo.length) {
-                    alert('추첨 인원이 참가자 수보다 많습니다.');
+                    // alert('추첨 인원이 참가자 수보다 많습니다.');
                     document.querySelector(selectorMap.raffleInputCount).focus();
                     return;
                 }
                 if (raffleInputCount > raffleCheckCount) {
-                    alert('선택된 참가자 수보다 추첨 인원이 많습니다.');
+                    // alert('선택된 참가자 수보다 추첨 인원이 많습니다.');
                     document.querySelector(selectorMap.raffleInputCount).focus();
                     return;
                 }
@@ -412,16 +428,14 @@ const oMain = (() => {
 
     const api = (() => {
         return {
-            raffleCreate: () => {
-                RaffleListArray.map((raffleInfo, index) => {
-                    oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
-                        raffleNo: index,
-                        raffleName: raffleInfo.raffleName,
-                        raffleColumnList: raffleInfo.raffleColumnList,
-                        status: raffleInfo.status,
-                        headCount: raffleInfo.headCount,
-                    }));
-                });
+            raffleCreate: (index, raffleInfo) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
+                    raffleNo: index,
+                    raffleName: raffleInfo.raffleName,
+                    raffleColumnList: raffleInfo.raffleColumnList,
+                    status: raffleInfo.status,
+                    headCount: raffleInfo.headCount,
+                }));
             },
             raffleStateChange: (raffleIndex, raffleInfo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
@@ -458,16 +472,18 @@ const oMain = (() => {
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         event.addRaffleParticipant(message, fromId);
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO) {
-                        RaffleListArray.map((raffleInfo, index) => {
-                            oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify({
+                        const message = RaffleListArray.map((raffleInfo, index) => {
+                            return {
                                 raffleNo: index,
                                 raffleName: raffleInfo.raffleName,
-                                raffleColumnList: raffleInfo.raffleColumnList,
                                 status: raffleInfo.status,
                                 isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId),
-                                headCount: raffleInfo.participantsInfo.length,
-                            }));
+                                raffleColumnList: raffleInfo.raffleColumnList,
+                            };
                         });
+                        if (message.length) {
+                            oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify(message));
+                        }
                     }
                 });
             },

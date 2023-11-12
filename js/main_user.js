@@ -19,9 +19,8 @@ const oMain = (() => {
         raffleParticipationSuccessBtn: '#raffle-participation-success-btn',
     };
 
-    let isLoading = false;
     let userInfo = {
-        userId: 'ghtyru01', // : String 유저 아이디
+        userId: '', // : String 유저 아이디
         userNickname: '', // : String 유저 닉네임
         userStatus: {
             isBJ: false, // : Boolean BJ 여부
@@ -46,7 +45,7 @@ const oMain = (() => {
             raffleList: () => {
                 return RaffleListArray.map((row, index) => {
                     const raffleNo = index;
-                    const {raffleName, status, isParticipants, headCount} = row;
+                    const {raffleName, status, isParticipants} = row;
                     let detailViewBtnHtml = '';
 
                     if (status === RAFFLE_STATE.ING) {
@@ -60,7 +59,6 @@ const oMain = (() => {
                     return `<tr>
                                 <td class="text-center">${raffleNo + 1}</td>
                                 <td>${raffleName}</td>
-                                <td class="text-center">${headCount ? headCount.toLocaleString('ko') : 0}</td>
                                 <td class="text-center">
                                     ${status === RAFFLE_STATE.ING ? `<input class="form-check-input large-checkbox raffle-state-checkbox" type="checkbox" value="" checked>` :
                         status === RAFFLE_STATE.DEAD_LINE_COMPLETED || status === RAFFLE_STATE.FINISH ? template.finishingText() : ''}
@@ -101,13 +99,13 @@ const oMain = (() => {
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
-                    alert('해당 추첨 정보가 없습니다.');
+                    // alert('해당 추첨 정보가 없습니다.');
                     event.screenReset();
                     return;
                 }
-                const isParticipation = selectRaffleInfo.participantsInfo.some((participant) => {
+                const isParticipation = selectRaffleInfo.participantsInfo ? selectRaffleInfo.participantsInfo.some((participant) => {
                     return participant.userId === userInfo.userId;
-                });
+                }) : false;
 
                 if (selectRaffleInfo.status === RAFFLE_STATE.ING) {
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = '';
@@ -144,11 +142,11 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', 'button.close', (e) => {
                     e.target.closest('.top-container').style.display = 'none';
                     document.querySelector(selectorMap.mainDiv).style.display = '';
-                    event.raffleListDataUpdateAndListRender();
+                    event.screenReset();
                 });
 
                 // 최초 로딩 시 추첨 리스트 요청 처리
-                event.raffleListDataUpdateAndListRender();
+                event.screenReset();
 
                 // 현황 체크박스 상태 변경 불가 처리
                 oCommon.addDelegateTarget(document, 'click', selectorMap.raffleStateCheckbox, (e) => {
@@ -166,7 +164,7 @@ const oMain = (() => {
                     const {raffleNo} = document.querySelector(selectorMap.raffleParticipationSuccessBtn).dataset;
 
                     if (!raffleNo) {
-                        alert('해당 추첨 정보가 없습니다.');
+                        // alert('해당 추첨 정보가 없습니다.');
                         event.screenReset();
                         return;
                     }
@@ -179,7 +177,7 @@ const oMain = (() => {
                     });
 
                     if (!validate) {
-                        alert('항목을 입력해주세요.');
+                        // alert('항목을 입력해주세요.');
                         return;
                     }
 
@@ -194,7 +192,7 @@ const oMain = (() => {
                     };
 
                     // 중복 참여 경우 정보 업데이트
-                    if (RaffleListArray[raffleNo].participantsInfo.some((participant) => participant.userId === userInfo.userId)) {
+                    if (RaffleListArray[raffleNo].participantsInfo && RaffleListArray[raffleNo].participantsInfo.some((participant) => participant.userId === userInfo.userId)) {
                         RaffleListArray[raffleNo].participantsInfo = RaffleListArray[raffleNo].participantsInfo.map((participant) => {
                             if (participant.userId === userInfo.userId) {
                                 return participantsInfo;
@@ -208,46 +206,48 @@ const oMain = (() => {
                     RaffleListArray[raffleNo].isParticipants = true;
                     api.addRaffleParticipant(participantsInfo);
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = 'none';
-                    event.raffleListDataUpdateAndListRender();
+                    event.screenReset();
                 });
             },
             setRaffleInfo: (raffleInfo) => {
-                const {settingIndex} = raffleInfo;
-                if (RaffleListArray.hasOwnProperty(settingIndex)) {
-                    RaffleListArray[settingIndex].raffleName = raffleInfo.raffleName;
-                    RaffleListArray[settingIndex].raffleColumnList = raffleInfo.raffleColumnList;
-                    RaffleListArray[settingIndex].status = raffleInfo.status;
-                    RaffleListArray[settingIndex].headCount = raffleInfo.headCount;
+                if (raffleInfo === null) {
+                    return;
+                }
+                const {raffleNo} = raffleInfo;
+                if (RaffleListArray.hasOwnProperty(raffleNo)) {
+                    RaffleListArray[raffleNo].raffleName = raffleInfo.raffleName;
+                    RaffleListArray[raffleNo].raffleColumnList = raffleInfo.raffleColumnList;
+                    RaffleListArray[raffleNo].status = raffleInfo.status;
                     if (raffleInfo.hasOwnProperty('winnerInfo')) {
-                        RaffleListArray[settingIndex].winnersInfo = raffleInfo.winnersInfo;
+                        RaffleListArray[raffleNo].winnersInfo = raffleInfo.winnersInfo;
                     }
                     if (raffleInfo.hasOwnProperty('isParticipants')) {
-                        RaffleListArray[settingIndex].isParticipants = raffleInfo.isParticipants;
+                        RaffleListArray[raffleNo].isParticipants = raffleInfo.isParticipants;
                     }
                 } else {
-                    RaffleListArray[settingIndex] = raffleInfo;
+                    RaffleListArray[raffleNo] = raffleInfo;
+                }
+
+                if (!RaffleListArray[raffleNo].hasOwnProperty('winnersInfo')) {
+                    RaffleListArray[raffleNo].winnersInfo = [];
+                }
+                if (!RaffleListArray[raffleNo].hasOwnProperty('isParticipants')) {
+                    RaffleListArray[raffleNo].isParticipants = false;
+                }
+                if (!RaffleListArray[raffleNo].hasOwnProperty('participantsInfo')) {
+                    RaffleListArray[raffleNo].participantsInfo = [];
+                }
+
+                if (document.querySelector(selectorMap.mainDiv).style.display === '') {
+                    render.raffleList();
                 }
             },
             screenReset: () => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
                 document.querySelectorAll('.top-container').forEach((element) => {
                     element.style.display = 'none';
                 });
-                event.raffleListDataUpdateAndListRender();
-            },
-            raffleListDataUpdateAndListRender: () => {
-                isLoading = true;
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
-
-                if (oConfig.isDev()) {
-                    render.raffleList();
-                } else {
-                    const interval = setInterval(() => {
-                        if (!isLoading) {
-                            clearInterval(interval);
-                            render.raffleList();
-                        }
-                    }, 100);
-                }
+                render.raffleList();
             },
         };
     })();
@@ -268,9 +268,14 @@ const oMain = (() => {
                         const messageObj = JSON.parse(message);
                         event.setRaffleInfo(messageObj);
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO) {
-                        const messageObj = JSON.parse(message);
-                        event.setRaffleInfo(messageObj);
-                        isLoading = false;
+                        if (message === null) {
+                            return;
+                        }
+                        const messageArray = JSON.parse(message);
+                        messageArray.forEach((raffleInfo) => {
+                            event.setRaffleInfo(raffleInfo);
+                        });
+                        render.raffleList();
                     } else if (action === CUSTOM_ACTION_CODE.SEND_WINNER_ALIM) {
                         //TODO 당첨자 알림
                     }
@@ -293,7 +298,6 @@ const oMain = (() => {
             //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2', 'test3', 'test4'],
             //     status: RAFFLE_STATE.ING,
             //     isParticipants: true,
-            //     headCount: 10,
             //     participantsInfo: [],
             //     winnersInfo: [],
             // });
@@ -302,7 +306,6 @@ const oMain = (() => {
             //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
             //     status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
             //     isParticipants: true,
-            //     headCount: 3,
             //     participantsInfo: [],
             //     winnersInfo: [],
             // });
@@ -311,7 +314,6 @@ const oMain = (() => {
             //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2', 'test3', 'test4'],
             //     status: RAFFLE_STATE.FINISH,
             //     isParticipants: false,
-            //     headCount: 10,
             //     participantsInfo: [],
             //     winnersInfo: [],
             // });
@@ -320,7 +322,6 @@ const oMain = (() => {
             //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
             //     status: RAFFLE_STATE.ING,
             //     isParticipants: false,
-            //     headCount: 0,
             //     participantsInfo: [],
             //     winnersInfo: [],
             // });
