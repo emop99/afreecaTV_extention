@@ -5,16 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--TODO 타이틀명 변경-->
     <title>Document</title>
+    <link rel="stylesheet" href="/css/bootstrap.css"/>
     <script defer src="https://static.afreecatv.com/asset/app/extension-helper/afreecatv-extension-sdk.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/lib/bootstrap.js"></script>
 </head>
 
 <body>
-<div id="div">user</div>
-<label for="text">your input</label>
-<input type="text" name="text" id="text">
-<button id="submit">submit</button>
+<div class="container top-container" id="main-div">
+    <h1 class="custom-title">추첨 리스트</h1>
+    <div class="table-container">
+        <table class="table table-hover table-sm caption-top">
+            <thead class="table-light">
+            <tr>
+                <th scope="col" class="text-center">No.</th>
+                <th scope="col" class="text-center">제목</th>
+                <th scope="col" class="text-center">인원</th>
+                <th scope="col" class="text-center">현황</th>
+                <th scope="col" class="text-center">상세보기</th>
+            </tr>
+            </thead>
+            <tbody id="raffle-list-tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container top-container" id="raffle-participation-div" style="display: none;">
+    <h1 class="custom-title"></h1>
+    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
+
+    <div class="container">
+        <div id="raffle-input-participation-column-div">
+        </div>
+    </div>
+
+    <div class="fixed-bottom text-center">
+        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-participation-success-btn">완료</button>
+    </div>
+</div>
+<div class="container top-container" id="raffle-detail-info-div" style="display: none;">
+    <h1 class="custom-title"></h1>
+    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
+
+    <div class="table-container">
+        <table class="table table-hover table-sm caption-top" id="raffle-detail-info-table">
+            <thead class="table-light" id="raffle-detail-info-thead">
+            </thead>
+            <tbody id="raffle-detail-info-tbody">
+            </tbody>
+        </table>
+    </div>
+
+    <div class="fixed-bottom text-center">
+    </div>
+</div>
 </body>
 
-<script type="module" src="/js/main_bj.js"></script>
+<script type="module" src="/js/main_user.js"></script>
 
 </html>

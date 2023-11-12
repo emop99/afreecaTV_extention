@@ -1,6 +1,6 @@
 import {oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME} from './modules/config.js';
 import oCommon from "./modules/common.js";
-import {ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
+import {oAfreeca, CUSTOM_ACTION_CODE} from "./modules/afreeca.js";
 
 const oMain = (() => {
     'use strict';
@@ -39,9 +39,9 @@ const oMain = (() => {
             },
             raffleList: () => {
                 return RaffleListArray.map((row, index) => {
-                    const raffleNo = index + 1;
+                    const raffleNo = index;
                     return `<tr>
-                                <td class="text-center">${raffleNo}</td>
+                                <td class="text-center">${raffleNo + 1}</td>
                                 <td>${row.raffleName}</td>
                                 <td class="text-center">${row.participantsInfo.length.toLocaleString('ko')}</td>
                                 <td class="text-center">
@@ -51,7 +51,7 @@ const oMain = (() => {
                                 <td class="text-center">
                                     ${row.status === RAFFLE_STATE.ING || row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED ?
                         `<button class="btn btn-primary btn-sm raffle-detail-view-btn" data-raffle-no="${raffleNo}">상세보기</button>` :
-                        row.status === RAFFLE_STATE.FINISH ? `<button class="btn btn-primary btn-sm raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨 완료</button>` :
+                        row.status === RAFFLE_STATE.FINISH ? `<button class="btn btn-primary btn-sm raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</button>` :
                             ''}
                                 </td>
                             </tr>`;
@@ -86,7 +86,7 @@ const oMain = (() => {
 
                 return `${participantsInfo.map((info, index) => `
                         <tr>
-                            <td class="text-center fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index + 1}"></td>
+                            <td class="text-center fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="text-center">${index + 1}</td>
                             <td class="text-center">${info.nickName}</td>
                             <td class="text-center">${USER_GRADE_NAME[info.grade]}</td>
@@ -143,7 +143,7 @@ const oMain = (() => {
                 document.querySelector(selectorMap.raffleAddColumnDiv).innerHTML = `${template.columnInputDiv()}${template.columnInputDiv()}${template.columnInputDiv()}`;
             },
             raffleDetailViewShowProc: (raffleNo) => {
-                const selectRaffleInfo = RaffleListArray[raffleNo - 1];
+                const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
                     alert('해당 추첨 정보가 없습니다.');
                     event.screenReset();
@@ -239,14 +239,14 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleFinishingBtn}`, (event) => {
                     const {raffleNo} = event.target.dataset;
 
-                    RaffleListArray[raffleNo - 1].status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
+                    RaffleListArray[raffleNo].status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
                     event.target.closest('td').innerHTML = template.finishingText();
 
-                    api.raffleStateChange(raffleNo - 1, RaffleListArray[raffleNo - 1]);
+                    api.raffleStateChange(raffleNo, RaffleListArray[raffleNo]);
                 });
 
-                // 추첨 상세보기 / 추첨 완료 버튼 이벤트
+                // 추첨 상세보기 / 추첨완료 버튼 이벤트
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleDetailViewBtn}`, (event) => {
                     const {raffleNo} = event.target.dataset;
                     render.raffleDetailViewShowProc(raffleNo);
@@ -294,7 +294,7 @@ const oMain = (() => {
                 // 재추첨 시작 버튼 클릭 이벤트
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleReStartBtn}`, (e) => {
                     const {raffleNo} = e.target.dataset;
-                    const selectRaffleInfo = RaffleListArray[raffleNo - 1];
+                    const selectRaffleInfo = RaffleListArray[raffleNo];
 
                     if (!selectRaffleInfo) {
                         alert('해당 추첨 정보가 없습니다.');
@@ -308,7 +308,7 @@ const oMain = (() => {
                     selectRaffleInfo.winnersInfo = [];
                     selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
-                    api.raffleWinnerReset(raffleNo - 1, selectRaffleInfo);
+                    api.raffleWinnerReset(raffleNo, selectRaffleInfo);
                     render.raffleDetailViewShowProc(raffleNo);
                 });
             },
@@ -330,7 +330,7 @@ const oMain = (() => {
                 document.querySelector(selectorMap.raffleParticipantsAllCheck).checked = isAllCheck;
             },
             raffleProc: (raffleNo) => {
-                const selectRaffleInfo = RaffleListArray[raffleNo - 1];
+                const selectRaffleInfo = RaffleListArray[raffleNo];
                 const {participantsInfo} = selectRaffleInfo;
                 const raffleInputCount = document.querySelector(selectorMap.raffleInputCount).value.trim();
                 const raffleCheckCount = document.querySelectorAll(`${selectorMap.raffleParticipantsCheck}:checked`).length;
@@ -362,7 +362,7 @@ const oMain = (() => {
                     while (true) {
                         const randomNumber = Math.floor(Math.random() * raffleCheckCount);
                         if (checkParticipants.hasOwnProperty(randomNumber)) {
-                            const index = checkParticipants[randomNumber].value - 1;
+                            const index = checkParticipants[randomNumber].value;
                             // 이미 같은 데이터가 존재하는지
                             if (winnersInfo.filter((info) => info.userId === participantsInfo[index].userId).length > 0) {
                                 continue;
@@ -387,15 +387,25 @@ const oMain = (() => {
             },
             addRaffleParticipant: (messageObj, userId) => {
                 const messageJson = JSON.parse(messageObj);
-                const {settingIndex, nickName, grade, customColumn} = messageJson;
+                const {raffleNo, nickName, grade, customColumn} = messageJson;
 
-                if (!RaffleListArray[settingIndex]) {
+                if (!RaffleListArray[raffleNo]) {
                     return;
                 }
 
-                RaffleListArray[settingIndex].participantsInfo.push({
-                    userId, nickName, grade, customColumn,
-                });
+                if (RaffleListArray[raffleNo].participantsInfo.filter((info) => info.userId === userId).length > 0) {
+                    RaffleListArray[raffleNo].participantsInfo.filter((info) => {
+                        if (info.userId === userId) {
+                            info.customColumn = customColumn;
+                        }
+                    });
+                } else {
+                    RaffleListArray[raffleNo].participantsInfo.push({
+                        userId, nickName, grade, customColumn,
+                    });
+                }
+
+                RaffleListArray[raffleNo].headCount = RaffleListArray[raffleNo].participantsInfo.length;
             },
         };
     })();
@@ -404,35 +414,38 @@ const oMain = (() => {
         return {
             raffleCreate: () => {
                 RaffleListArray.map((raffleInfo, index) => {
-                    oAfreeca.api.broadcastSend(ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
-                        settingIndex: index,
+                    oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
+                        raffleNo: index,
                         raffleName: raffleInfo.raffleName,
                         raffleColumnList: raffleInfo.raffleColumnList,
                         status: raffleInfo.status,
+                        headCount: raffleInfo.headCount,
                     }));
                 });
             },
             raffleStateChange: (raffleIndex, raffleInfo) => {
-                oAfreeca.api.broadcastSend(ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
-                    settingIndex: raffleIndex,
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
+                    raffleNo: raffleIndex,
                     raffleName: raffleInfo.raffleName,
                     raffleColumnList: raffleInfo.raffleColumnList,
                     status: raffleInfo.status,
+                    headCount: raffleInfo.headCount,
                 }));
             },
             raffleWinnerReset: (raffleIndex, raffleInfo) => {
-                oAfreeca.api.broadcastSend(ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
-                    settingIndex: raffleIndex,
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
+                    raffleNo: raffleIndex,
                     raffleName: raffleInfo.raffleName,
                     raffleColumnList: raffleInfo.raffleColumnList,
                     status: raffleInfo.status,
+                    headCount: raffleInfo.headCount,
                     winnersInfo: [],
                 }));
             },
             raffleWinnerAlimSend: (winnersInfo) => {
                 winnersInfo.forEach((info) => {
                     const {userId} = info;
-                    oAfreeca.api.broadcastWhisper(userId, ACTION_CODE.SEND_WINNER_ALIM, null);
+                    oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, null);
                 });
             },
         };
@@ -442,8 +455,19 @@ const oMain = (() => {
         return {
             init: () => {
                 oAfreeca.api.broadcastListener((action, message, fromId) => {
-                    if (action === ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
+                    if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         event.addRaffleParticipant(message, fromId);
+                    } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO) {
+                        RaffleListArray.map((raffleInfo, index) => {
+                            oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify({
+                                raffleNo: index,
+                                raffleName: raffleInfo.raffleName,
+                                raffleColumnList: raffleInfo.raffleColumnList,
+                                status: raffleInfo.status,
+                                isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId),
+                                headCount: raffleInfo.participantsInfo.length,
+                            }));
+                        });
                     }
                 });
             },
@@ -830,5 +854,6 @@ const oMain = (() => {
 
 (() => {
     oConfig.init();
+    oAfreeca.init();
     oMain.init();
 })();

@@ -18,9 +18,15 @@ const USER_GRADE_NAME = {
 
 const oConfig = (() => {
     'use strict';
+    
+    let isDev = false;
 
     return {
         init: () => {
+            isDev = (window.location.hostname === 'localhost');
+        },
+        isDev: () => {
+            return isDev;
         },
     };
 })();

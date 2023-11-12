@@ -1,0 +1,40 @@
+.fixed-bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.fixed-bottom button {
+    width: 250px;
+}
+
+.center-block {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.table-container {
+    max-height: 600px;
+    overflow: auto;
+}
+
+.custom-title {
+    text-align: center;
+    padding-top: 10px;
+}
+
+button.close {
+    padding-top: 30px;
+}
+
+.large-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+#raffle-detail-info-div table thead th.fix-column, table tbody td.fix-column {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
