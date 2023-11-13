@@ -3,76 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--TODO 타이틀 명 변경-->
-    <title></title>
-    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <title>AfreecaTV 랜덤뽑기 PC팝업 BJ</title>
     <script defer src="https://static.afreecatv.com/asset/app/extension-helper/afreecatv-extension-sdk.js"></script>
-    <link rel="stylesheet" href="/css/bootstrap-icons.css">
     <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/lib/bootstrap.js"></script>
+    <script src="/js/lib/jquery-1.12.4.js"></script>
 </head>
 <body>
-<div class="container top-container" id="main-div">
-    <h1 class="custom-title">추첨 리스트(BJ)</h1>
-    <div class="table-container">
-        <table class="table table-hover table-sm caption-top">
-            <thead class="table-light">
-            <tr>
-                <th scope="col" class="text-center">No.</th>
-                <th scope="col" class="text-center">제목</th>
-                <th scope="col" class="text-center">인원</th>
-                <th scope="col" class="text-center">현황</th>
-                <th scope="col" class="text-center">상세보기</th>
-            </tr>
-            </thead>
-            <tbody id="raffle-list-tbody">
-            </tbody>
-        </table>
-    </div>
-    <div class="fixed-bottom text-center">
-        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-add-show-btn">추첨 추가하기</button>
-    </div>
-</div>
-<div class="container top-container" id="raffle-add-div" style="display: none;">
-    <h1 class="custom-title">신청 설정(BJ)</h1>
-    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
-
-    <div class="container">
-        <div class="input-group mb-3">
-            <span class="input-group-text">제목</span>
-            <input type="text" class="form-control" placeholder="제목을 입력해주세요." aria-label="제목" name="add-raffle-name">
-        </div>
-        <div id="raffle-add-column-div">
+<div class="tot-container top-container" id="main-div">
+    <div class="lottery-list-bj">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2>추첨 리스트</h2></div>
+                <div class="header-icons">
+                    <div class="settings-btn"><a href="javascript:;"><img src="./images/icon-settings.svg" alt="icon-settings"></a></div>
+                </div>
+            </div>
+            <div class="common-table">
+                <table>
+                    <thead class="table-light">
+                    <tr class="table-head">
+                        <th>No.</th>
+                        <th>제목</th>
+                        <th>인원</th>
+                        <th>마감</th>
+                        <th>상세보기</th>
+                    </tr>
+                    </thead>
+                    <tbody id="raffle-list-tbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="common-footer">
+                <div class="result-btn"><a href="javascript:;" id="raffle-add-show-btn">추첨 추가하기</a></div>
+            </div>
         </div>
     </div>
-
-    <div class="fixed-bottom text-center">
-        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-add-btn">완료</button>
+</div>
+<div class="tot-container top-container" id="raffle-add-div" style="display: none;">
+    <div class="apply-setting-bj">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2>추첨 추가 설정</h2></div>
+                <div class="header-icons">
+                    <div class="close-btn"><a href="javascript:;" class="close"><img src="./images/icon-close.svg" alt="icon-settings"></a></div>
+                </div>
+            </div>
+            <div class="form-apply-setting">
+                <form>
+                    <fieldset id="form-name">
+                        <legend>제목</legend>
+                        <label for="form-name"><input type="text" value="" name="add-raffle-name" placeholder="추첨 제목을 입력해주세요."></label>
+                        <hr>
+                    </fieldset>
+                    <fieldset class="raffle-add-column-div" id="form-setting">
+                        <label for="form-setting">
+                            <button class="add-form-btn column-add-btn" type="button"><img src="./images/icon-add.svg" alt="icon-add">목록 추가</button>
+                        </label>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="common-footer">
+                <div class="result-btn"><a href="javascript:;" id="raffle-add-btn">완료</a></div>
+            </div>
+        </div>
     </div>
 </div>
-<div class="container top-container" id="raffle-detail-info-div" style="display: none;">
-    <h1 class="custom-title"></h1>
-    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
-
-    <div class="input-group" style="margin-bottom: 20px;">
-        <span class="input-group-text"><i class="bi bi-search"></i></span>
-        <input type="text" class="form-control" placeholder="검색어를 입력해주세요." id="raffle-search-input">
+<div class="tot-container top-container" id="raffle-detail-info-div" style="display: none;">
+    <div class="application-list-bj">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2>추첨 제목</h2></div>
+                <div class="header-icons">
+                    <div class="close-btn"><a href="javascript:;" class="close"><img src="./images/icon-close.svg" alt="icon-settings"></a></div>
+                </div>
+            </div>
+            <div class="search">
+                <img src="./images/icon-search.svg" alt="icon-search">
+                <input type="search" placeholder="검색어를 입력해주세요." value="" id="raffle-search-input">
+            </div>
+            <div class="common-table">
+                <table id="raffle-detail-info-table">
+                    <thead id="raffle-detail-info-thead">
+                    </thead>
+                    <tbody id="raffle-detail-info-tbody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="common-footer">
+                <div class="lottery-number-from">
+                    <label for="lottery-number">
+                        <p>추첨 인원</p>
+                    </label>
+                    <input type="number" class="raffle-input-count" id="lottery-number" min="1" value="1">
+                </div>
+                <div class="result-btn">
+                    <a href="javascript:;">추첨 시작</a>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
-    <div class="table-container">
-        <table class="table table-hover table-sm caption-top" id="raffle-detail-info-table">
-            <thead class="table-light" id="raffle-detail-info-thead">
-            </thead>
-            <tbody id="raffle-detail-info-tbody">
-            </tbody>
-        </table>
+<div class="system-setting">
+    <div class="delete-all">
+        <img src="./images/icon-delete.svg" alt="icon-delete">
+        <p>전체 초기화</p>
     </div>
-
-    <div class="fixed-bottom text-center">
-    </div>
+    <!--    <div class="dark-mode">-->
+    <!--        <img src="./images/icon-dark-mode.svg" alt="icon-dark-mode">-->
+    <!--        <p>다크 모드</p>-->
+    <!--    </div>-->
+    <!--    <div class="light-mode">-->
+    <!--        <img src="./images/icon-light-mode.svg" alt="icon-light-mode">-->
+    <!--        <p>라이트 모드</p>-->
+    <!--    </div>-->
+    <div class="triangle"></div>
 </div>
 </body>
 
 <script type="module" src="/js/main_bj.js"></script>
+
+<script>
+    $('.settings-btn').mouseenter(function () {
+        $('.system-setting').stop().fadeIn()
+    })
+    $('.settings-btn').mouseleave(function () {
+        $('.system-setting').stop().fadeOut()
+    })
+
+    $('.system-setting').mouseenter(function () {
+        $('.system-setting').stop().fadeIn()
+    })
+    $('.system-setting').mouseleave(function () {
+        $('.system-setting').stop().fadeOut()
+    })
+</script>
 
 </html>

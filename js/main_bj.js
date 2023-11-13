@@ -8,18 +8,19 @@ const oMain = (() => {
     const RaffleListArray = [];
     const selectorMap = {
         mainDiv: '#main-div',
+        systemSetting: '.system-setting',
         raffleAddDiv: '#raffle-add-div',
         raffleDetailInfoDiv: '#raffle-detail-info-div',
         raffleListTbody: '#raffle-list-tbody',
         raffleAddShowBtn: '#raffle-add-show-btn',
         raffleAddColumnInputDiv: '.add-column-input-div',
-        raffleAddColumnDiv: '#raffle-add-column-div',
+        raffleAddColumnDiv: '.raffle-add-column-div',
         raffleAddSubjectInput: '#raffle-add-div [name="add-raffle-name"]',
         raffleAddColumnInput: '#raffle-add-div [name="add-raffle-column[]"]',
         raffleAddBtn: '#raffle-add-btn',
         raffleFinishingBtn: '#raffle-list-tbody .raffle-finishing-btn',
-        columnMinusBtn: '.add-column-input-div .column-minus-btn',
-        columnAddBtn: '.add-column-input-div .column-add-btn',
+        columnDeleteBtn: '.raffle-add-column-div .remove-form-btn',
+        columnAddBtn: '.raffle-add-column-div .column-add-btn',
         raffleDetailViewBtn: '#raffle-list-tbody .raffle-detail-view-btn',
         raffleDetailInfoTable: '#raffle-detail-info-div #raffle-detail-info-table',
         raffleDetailInfoThead: '#raffle-detail-info-div #raffle-detail-info-thead',
@@ -27,8 +28,8 @@ const oMain = (() => {
         raffleSearchInput: '#raffle-detail-info-div #raffle-search-input',
         raffleParticipantsAllCheck: '#raffle-detail-info-div .participants-all-check',
         raffleParticipantsCheck: '#raffle-detail-info-div .participants-check',
-        raffleStartBtn: '#raffle-detail-info-div #raffle-start-btn',
-        raffleReStartBtn: '#raffle-detail-info-div #raffle-restart-btn',
+        raffleStartBtn: '#raffle-detail-info-div .raffle-start-btn',
+        raffleReStartBtn: '#raffle-detail-info-div .raffle-restart-btn',
         raffleInputCount: '#raffle-detail-info-div .raffle-input-count',
     };
 
@@ -45,35 +46,34 @@ const oMain = (() => {
                                 <td>${row.raffleName}</td>
                                 <td class="text-center">${row.participantsInfo.length.toLocaleString('ko')}</td>
                                 <td class="text-center">
-                                    ${row.status === RAFFLE_STATE.ING ? `<input class="form-check-input large-checkbox raffle-finishing-btn" type="checkbox" value="" data-raffle-no="${raffleNo}" checked>` :
+                                    ${row.status === RAFFLE_STATE.ING ? `<a href="javascript:;" class="list-close-btn raffle-finishing-btn" data-raffle-no="${raffleNo}"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="${raffleNo}"></a>` :
                         row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED || row.status === RAFFLE_STATE.FINISH ? template.finishingText() : ''}
                                 </td>
                                 <td class="text-center">
                                     ${row.status === RAFFLE_STATE.ING || row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED ?
-                        `<button class="btn btn-primary btn-sm raffle-detail-view-btn" data-raffle-no="${raffleNo}">상세보기</button>` :
-                        row.status === RAFFLE_STATE.FINISH ? `<button class="btn btn-primary btn-sm raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</button>` :
+                        `<a href="javascript:;" class="badge-primary-1 raffle-detail-view-btn" data-raffle-no="${raffleNo}">상세보기</a>` :
+                        row.status === RAFFLE_STATE.FINISH ? `<a href="javascript:;" class="badge-primary-2 raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</a>` :
                             ''}
                                 </td>
                             </tr>`;
                 }).join('');
             },
             columnInputDiv: () => {
-                return `<div class="input-group mb-3 add-column-input-div">
-                            <button class="btn btn-outline-secondary column-minus-btn" type="button">-</button>
-                            <button class="btn btn-outline-secondary column-add-btn" type="button">+</button>
-                            <input type="text" class="form-control" placeholder="항목을 입력해주세요." name="add-raffle-column[]">
-                        </div>`;
+                return `<label for="form-setting" class="add-column-input-div">
+                            <button class="remove-form-btn" type="button"><img src="./images/icon-remove.svg" alt="icon-remove"></button>
+                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]">
+                        </label>`;
             },
             finishingText: () => {
                 return `<span>마감</span>`;
             },
             raffleNotFinishDetailInfoThead: (raffleInfo) => {
                 const {raffleColumnList} = raffleInfo;
-                return `<tr>
-                            <th class="text-center fix-column"><input class="form-check-input large-checkbox participants-all-check" type="checkbox" value=""></th>
-                            <th class="text-center">No.</th>
-                            <th class="text-center">닉네임</th>
-                            <th class="text-center">등급</th>
+                return `<tr class="table-head">
+                            <th class="fix-column"><input class="form-check-input large-checkbox participants-all-check" type="checkbox" value=""></th>
+                            <th class="">No.</th>
+                            <th class="">닉네임</th>
+                            <th class="">등급</th>
                             ${raffleColumnList.map((column) => `<th class="text-center">${column}</th>`).join('')}
                         </tr>`;
             },
@@ -86,40 +86,36 @@ const oMain = (() => {
 
                 return `${participantsInfo.map((info, index) => `
                         <tr>
-                            <td class="text-center fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
-                            <td class="text-center">${index + 1}</td>
-                            <td class="text-center">${info.nickName}</td>
-                            <td class="text-center">${USER_GRADE_NAME[info.grade]}</td>
-                            ${info.customColumn.map((column) => `<td class="text-center">${column}</td>`).join('')}
+                            <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
+                            <td class="">${index + 1}</td>
+                            <td class="">${info.nickName}</td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
+                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')}`;
             },
             raffleFinishDetailInfoThead: (raffleInfo) => {
                 const {raffleColumnList} = raffleInfo;
-                return `<tr>
-                            <th class="text-center">No.</th>
-                            <th class="text-center">닉네임</th>
-                            <th class="text-center">등급</th>
-                            ${raffleColumnList.map((column) => `<th class="text-center">${column}</th>`).join('')}
+                return `<tr class="table-head">
+                            <th class="fix-column">No.</th>
+                            <th class="">닉네임</th>
+                            <th class="">등급</th>
+                            ${raffleColumnList.map((column) => `<th class="">${column}</th>`).join('')}
                         </tr>`;
             },
             raffleFinishDetailInfoTbody: (raffleInfo) => {
                 return raffleInfo.winnersInfo.map((info, index) => `
                         <tr>
-                            <td class="text-center">${index + 1}</td>
-                            <td class="text-center">${info.nickName}</td>
-                            <td class="text-center">${USER_GRADE_NAME[info.grade]}</td>
-                            ${info.customColumn.map((column) => `<td class="text-center">${column}</td>`).join('')}
+                            <td class="">${index + 1}</td>
+                            <td class="">${info.nickName}</td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
+                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')
             },
             raffleStartBtn: (raffleNo) => {
-                return `<div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-shuffle"></i></span>
-                            <input type="number" class="form-control only-number raffle-input-count" placeholder="추첨 인원을 입력해주세요." value="">
-                            <button class="btn btn-outline-secondary" id="raffle-start-btn" type="button" data-raffle-no="${raffleNo}">추첨 시작하기</button>
-                        </div>`;
+                return `<a href="javascript:;" class="raffle-start-btn" data-raffle-no="${raffleNo}">추첨 시작</a>`;
             },
             raffleReStartBtn: (raffleNo) => {
-                return `<button type="button" class="btn btn-primary btn-lg center-block" id="raffle-restart-btn" data-raffle-no="${raffleNo}">재추첨</button>`;
+                return `<a href="javascript:;" class="raffle-restart-btn" data-raffle-no="${raffleNo}">재추첨</a>`;
             },
         };
     })();
@@ -147,7 +143,7 @@ const oMain = (() => {
                 document.querySelector(selectorMap.raffleAddDiv).style.display = '';
                 document.querySelector(selectorMap.mainDiv).style.display = 'none';
                 document.querySelector(selectorMap.raffleAddSubjectInput).value = '';
-                document.querySelector(selectorMap.raffleAddColumnDiv).innerHTML = `${template.columnInputDiv()}${template.columnInputDiv()}${template.columnInputDiv()}`;
+                document.querySelector(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
             },
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
@@ -158,21 +154,27 @@ const oMain = (() => {
                 }
                 document.querySelector(selectorMap.raffleDetailInfoDiv).style.display = '';
                 document.querySelector(selectorMap.mainDiv).style.display = 'none';
-                document.querySelector(`${selectorMap.raffleDetailInfoDiv} .custom-title`).innerHTML = `${selectRaffleInfo.raffleName}`;
+                document.querySelector(`${selectorMap.raffleDetailInfoDiv} .header-title h2`).innerHTML = `${selectRaffleInfo.raffleName}`;
                 document.querySelector(selectorMap.raffleSearchInput).value = '';
                 document.querySelector(selectorMap.raffleDetailInfoTable).style.width = (selectRaffleInfo.raffleColumnList.length + 4) * 130 >= 500 ? `${(selectRaffleInfo.raffleColumnList.length + 3) * 130}px` : `100%`;
 
                 if (selectRaffleInfo.status === RAFFLE_STATE.ING || selectRaffleInfo.status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
                     document.querySelector(selectorMap.raffleDetailInfoThead).innerHTML = template.raffleNotFinishDetailInfoThead(selectRaffleInfo);
                     document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = template.raffleNotFinishDetailInfoTbody(selectRaffleInfo);
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .fixed-bottom`).innerHTML = template.raffleStartBtn(raffleNo);
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .result-btn`).innerHTML = template.raffleStartBtn(raffleNo);
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .lottery-number-from`).style.display = '';
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.add('application-list-bj');
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.remove('random-lottery-bj');
                     document.querySelector(selectorMap.raffleParticipantsAllCheck).checked = true;
                     event.raffleParticipantsCheckProc(true);
                 } else if (selectRaffleInfo.status === RAFFLE_STATE.FINISH) {
                     document.querySelector(selectorMap.raffleDetailInfoThead).innerHTML = template.raffleFinishDetailInfoThead(selectRaffleInfo);
                     document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = template.raffleFinishDetailInfoTbody(selectRaffleInfo);
 
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .fixed-bottom`).innerHTML = template.raffleReStartBtn(raffleNo);
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .lottery-number-from`).style.display = 'none';
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.remove('application-list-bj');
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.add('random-lottery-bj');
+                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .result-btn`).innerHTML = template.raffleReStartBtn(raffleNo);
                 }
             },
         };
@@ -226,9 +228,19 @@ const oMain = (() => {
                 });
 
                 // close button event
-                oCommon.addDelegateTarget(document, 'click', 'button.close', (event) => {
+                oCommon.addDelegateTarget(document, 'click', 'a.close', (event) => {
                     event.target.closest('.top-container').style.display = 'none';
                     document.querySelector(selectorMap.mainDiv).style.display = '';
+                    render.raffleList();
+                });
+
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, (event) => {
+                    if (!confirm('추첨 리스트 전체를 삭제하시겠습니까?')) {
+                        return false;
+                    }
+
+                    document.querySelector(selectorMap.systemSetting).style.display = 'none';
+                    RaffleListArray.length = 0;
                     render.raffleList();
                 });
 
@@ -238,7 +250,7 @@ const oMain = (() => {
                 }, 1000);
 
                 // 추첨 신청 열 제거
-                oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnMinusBtn}`, (event) => {
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnDeleteBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 1) {
                         // alert('최소 1개 이상의 항목은 필요합니다.');
                         return;
@@ -248,7 +260,11 @@ const oMain = (() => {
 
                 // 추첨 신청 열 추가
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnAddBtn}`, (event) => {
-                    event.target.closest(selectorMap.raffleAddColumnInputDiv).insertAdjacentHTML('afterend', template.columnInputDiv());
+                    if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 5) {
+                        // alert('최대 5개까지만 추가 가능합니다.');
+                        return;
+                    }
+                    event.target.closest(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
                 });
 
                 // 추첨 마감 처리 이벤트
@@ -495,7 +511,7 @@ const oMain = (() => {
             //TODO 초기데이터 테스트 셋팅
             // RaffleListArray.push({
             //     raffleName: '테스트1',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2', 'test3', 'test4'],
+            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
             //     status: RAFFLE_STATE.ING,
             //     participantsInfo: [
             //         {
@@ -508,8 +524,6 @@ const oMain = (() => {
             //                 '올라프장인',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -522,8 +536,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -536,8 +548,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -550,8 +560,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -564,8 +572,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -578,8 +584,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -592,8 +596,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -606,8 +608,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -620,8 +620,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -634,8 +632,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //     ],
@@ -680,7 +676,7 @@ const oMain = (() => {
             // });
             // RaffleListArray.push({
             //     raffleName: '테스트3',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2', 'test3', 'test4'],
+            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
             //     status: RAFFLE_STATE.FINISH,
             //     participantsInfo: [
             //         {
@@ -693,8 +689,6 @@ const oMain = (() => {
             //                 '올라프장인',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -707,8 +701,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -721,8 +713,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -735,8 +725,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -749,8 +737,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -763,8 +749,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -777,8 +761,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -791,8 +773,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -805,8 +785,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -819,8 +797,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //     ],
@@ -835,8 +811,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //         {
@@ -849,8 +823,6 @@ const oMain = (() => {
             //                 '다드루와',
             //                 'column4',
             //                 'column5',
-            //                 'column6',
-            //                 'column7',
             //             ],
             //         },
             //     ],

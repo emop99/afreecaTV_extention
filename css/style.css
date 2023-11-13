@@ -1,40 +1,642 @@
-.fixed-bottom {
-    position: fixed;
-    bottom: 0;
+/* ####################### Noonnu Web Font CDN ####################### */
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-SemiBold';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* @@@@@@@@@@@ 페이지 한눈에 보기+아웃라인 @@@@@@@@@@@ */
+body .tot-container {
+    display: flex;
+}
+.common-container {
+    border: 1px solid #000;
+}
+
+/* ####################### Default CSS ####################### */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Pretendard-Regular';
+    font-weight: 400;
+    color: #000;
+    font-size: 14px;
+}
+
+input,
+button,
+fieldset,
+legend,
+a {
+    text-decoration: none;
+    color: inherit;
+    background-color: #fff;
+    outline: none;
+    border: none;
+    font-family: 'Pretendard-Regular';
+    color: #000;
+    font-size: 14px;
+}
+
+input:focus {
+    border-color: #5D5FEF !important;
+}
+
+input::placeholder {
+    color: #bbb;
+}
+
+input[type="checkbox"] {
+    accent-color: #5D5FEF !important;
+    scale: 1.3;
+    cursor: pointer;
+    border-radius: 0px;
+}
+
+input::-ms-clear,
+input::-ms-reveal {
+    display: none;
+}
+
+input::-webkit-search-decoration,
+input::-webkit-search-cancel-button,
+input::-webkit-search-results-button,
+input::-webkit-search-results-decoration {
+    display: none;
+}
+
+
+/* ####################### common CSS ####################### */
+.badge-primary-1 {
+    background-color: #5D5FEF;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.badge-primary-2 {
+    background-color: #D4D4FC;
+    color: #5D5FEF;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.badge-gray-1 {
+    background-color: #eee;
+    color: #777;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.common-container {
+    width: 500px;
+    height: 640px;
+    padding: 10px;
+}
+
+
+/* ####################### common-header ####################### */
+.common-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+.common-header .header-title {
     width: 100%;
+    height: 60px;
+    padding-left: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
-.fixed-bottom button {
-    width: 250px;
-}
-
-.center-block {
-    display: block;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-.table-container {
-    max-height: 600px;
-    overflow: auto;
-}
-
-.custom-title {
+.common-header .header-title h2 {
+    font-family: 'Pretendard-SemiBold';
+    color: #000;
     text-align: center;
-    padding-top: 10px;
+    font-size: 22px;
+
+}
+.common-header .header-icons {
+    display: flex;
+    align-items: center;
+}
+.common-header .header-icons>* {
+    transition: 0.35s;
+}
+.common-header .header-icons>*:hover {
+    opacity: 0.5;
+}
+.common-header .header-icons .settings-btn {
+    margin-right: 10px;
 }
 
-button.close {
-    padding-top: 30px;
+/* ####################### common-table ####################### */
+.common-table {
+    width: 100%;
+    height: 458px;
+    overflow: scroll;
+    /* border: 1px solid #bbb; */
+    background-color: #fff;
 }
 
-.large-checkbox {
-    width: 20px;
-    height: 20px;
+.common-table table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    empty-cells: hide;
+}
+.common-table .table-head {
+    background-color: #eee;
 }
 
-#raffle-detail-info-div table thead th.fix-column, table tbody td.fix-column {
-    position: sticky;
-    left: 0;
-    z-index: 1;
+.common-table th,
+.common-table td {
+    /* border-right: 1px solid #bbb;
+    border-bottom: 1px solid #bbb; */
+    border: 1px solid #bbb;
+    padding: 0 12px 0 12px;
+    height: 38px;
 }
+.common-table th {
+    text-align: center;
+    font-family: 'Pretendard-SemiBold';
+    font-size: 15px;
+    position: relative;
+}
+
+.common-table th a img {
+    /* border: 1px solid #000; */
+    position: absolute;
+    top: 5px;
+}
+
+/* ####################### common-footer ####################### */
+.common-footer {
+    width: 100%;
+    height: 95px;
+    /* border: 1px solid #000; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.result-btn a {
+    display: block;
+    width: 300px;
+    height: 40px;
+    border-radius: 4px;
+    background-color: #5D5FEF;
+    color: #fff;
+    text-align: center;
+    font-family: 'Pretendard-SemiBold';
+    font-size: 18px;
+    line-height: 38px;
+    transition: 0.35s;
+}
+.result-btn a:hover {
+    opacity: 0.8;
+}
+
+.lottery-number-from {
+    margin-bottom: 20px;
+}
+.lottery-number-from>label {
+    font-family: 'Pretendard-Regular';
+    font-size: 16px;
+    display: inline-block;
+    padding: 0px 10px 0px 0px;
+}
+.lottery-number-from>input {
+    padding: 5px 0px 5px 10px;
+    width: 100px;
+    height: 30px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    transition: 0.35s;
+    font-family: 'Pretendard-Regular';
+    color: #000;
+    font-size: 14px;
+}
+
+.lottery-number-from>input:focus {
+    border-color: #5D5FEF;
+}
+
+.search-selection {
+    background-color: #FCDDEC;
+}
+
+
+
+/* ####################### lottery-list-bj ####################### */
+
+/* table */
+.lottery-list-bj .common-table td:nth-child(1),
+.lottery-list-bj .common-table td:nth-child(3),
+.lottery-list-bj .common-table td:nth-child(4),
+.lottery-list-bj .common-table td:nth-child(5) {
+    text-align: center;
+}
+
+.lottery-list-bj .common-table td:nth-child(4) {
+    color: #EF5DA8;
+}
+.lottery-list-bj .common-table td:nth-child(4)>a>img,
+.lottery-list-bj .common-table td:nth-child(5)>a {
+    transition: 0.35s;
+}
+.lottery-list-bj .common-table td:nth-child(4)>a>img:hover,
+.lottery-list-bj .common-table td:nth-child(5)>a:hover {
+    opacity: 0.8;
+}
+
+
+.lottery-list-bj .common-table th:nth-child(1) {
+    width: 48px;
+}
+.lottery-list-bj .common-table th:nth-child(2) {
+    width: 160px;
+}
+.lottery-list-bj .common-table th:nth-child(3),
+.lottery-list-bj .common-table th:nth-child(4) {
+    width: 70px;
+}
+.lottery-list-bj .common-table th:nth-child(5) {
+    width: 114px;
+}
+
+
+/* ####################### apply-setting-bj ####################### */
+
+.apply-setting-bj .form-apply-setting {
+    /* border: 1px solid #000; */
+    overflow: scroll;
+    width: 100%;
+    height: 460px;
+    padding: 0px 30px 0px 30px;
+}
+
+.apply-setting-bj .form-apply-setting #form-setting button,
+.apply-setting-bj .form-apply-setting #form-setting input {
+    margin-bottom: -15px;
+}
+
+.apply-setting-bj .form-apply-setting label input,
+.form-text-style {
+    border: 1px solid #bbb;
+    width: 100%;
+    height: 44px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    transition: 0.35s;
+    margin-bottom: 0px;
+    position: relative;
+}
+
+.apply-setting-bj .form-apply-setting label input:focus {
+    border-color: 1px solid #5D5FEF;
+}
+
+.apply-setting-bj .form-apply-setting #form-name legend {
+    font-family: 'Pretendard-SemiBold';
+    font-size: 16px;
+    padding-bottom: 6px;
+}
+.apply-setting-bj .form-apply-setting #form-name hr {
+    border: none;
+    border-bottom: 1px solid #bbb;
+    margin: 20px 0px 20px 0px;
+}
+
+.apply-setting-bj .form-apply-setting #form-setting .add-form-btn {
+    border: 1px solid #5D5FEF;
+    color: #5D5FEF;
+    background-color: #D4D4FC;
+    width: 100%;
+    height: 44px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items:center;
+}
+
+.apply-setting-bj .form-apply-setting #form-setting .add-form-btn img {
+    filter: invert(32%) sepia(54%) saturate(3609%) hue-rotate(230deg) brightness(101%) contrast(87%);
+    margin-right: 10px;
+    /* border: 1px solid #000; */
+}
+
+.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn {
+    background-color: none;
+    position: relative;
+    width: 1px;
+    height: 1px;
+    top: 38px;
+    left: 11px;
+}
+.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn img {
+    filter: invert(32%) sepia(54%) saturate(3609%) hue-rotate(230deg) brightness(101%) contrast(87%);
+    margin-right: 10px;
+    /* border: 1px solid #000; */
+    z-index: 10;
+    position: relative;
+    cursor: pointer;
+}
+.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn+input {
+    padding-left: 46px;
+}
+/* footer */
+.apply-setting-bj .common-footer {
+    height: 90px;
+    /* border: 1px solid #000; */
+}
+
+
+/* ####################### application-list-bj ####################### */
+.application-list-bj .search,
+.random-lottery-bj .search {
+    padding-bottom: 10px;
+}
+.application-list-bj .search img,
+.random-lottery-bj .search img {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 10px;
+    filter: invert(50%) sepia(0%) saturate(2%) hue-rotate(12deg) brightness(92%) contrast(91%);
+}
+.application-list-bj .search input,
+.random-lottery-bj .search input {
+    padding: 5px 0px 5px 40px;
+    width: 100%;
+    height: 44px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-family: 'Pretendard-Regular';
+    color: #000;
+    font-size: 14px;
+    transition: 0.35s;
+}
+
+
+/* table */
+.application-list-bj .common-table .badge-primary-2{
+    padding: 5px 10px 5px 10px;
+}
+
+.application-list-bj .common-table{
+    height: 360px;
+}
+
+.application-list-bj .common-table td{
+    text-align: center;
+}
+
+.application-list-bj .common-table th:nth-child(1){
+    width: 48px;
+}
+.application-list-bj .common-table th:nth-child(2){
+    width: 48px;
+}
+.application-list-bj .common-table th:nth-child(3){
+    width: 120px;
+}
+.application-list-bj .common-table th:nth-child(4){
+    width: 70px;
+}
+.application-list-bj .common-table th:nth-child(5){
+    width: 170px;
+}
+.application-list-bj .common-table th:nth-child(6){
+    width: 170px;
+}
+.application-list-bj .common-table th:nth-child(7){
+    width: 170px;
+}
+.application-list-bj .common-table th:nth-child(8){
+    width: 170px;
+}
+.application-list-bj .common-table th:nth-child(9){
+    width: 170px;
+}
+
+
+/* footer */
+.application-list-bj .common-footer,
+.random-lottery-bj .common-footer {
+    height: 135px;
+    /* border: 1px solid #000; */
+}
+
+/* ####################### random-lottery-bj ####################### */
+/* table */
+.random-lottery-bj .common-table .badge-primary-2 {
+    padding: 5px 10px 5px 10px;
+}
+
+.random-lottery-bj .common-table {
+    height: 360px;
+}
+
+.random-lottery-bj .common-table td {
+    text-align: center;
+}
+
+.random-lottery-bj .common-table th:nth-child(1) {
+    width: 48px;
+}
+.random-lottery-bj .common-table th:nth-child(2) {
+    width: 120px;
+}
+.random-lottery-bj .common-table th:nth-child(3) {
+    width: 70px;
+}
+.random-lottery-bj .common-table th:nth-child(4) {
+    width: 170px;
+}
+.random-lottery-bj .common-table th:nth-child(5) {
+    width: 170px;
+}
+.random-lottery-bj .common-table th:nth-child(6) {
+    width: 170px;
+}
+.random-lottery-bj .common-table th:nth-child(7) {
+    width: 170px;
+}
+.random-lottery-bj .common-table th:nth-child(8) {
+    width: 170px;
+}
+.random-lottery-bj .common-table th:nth-child(9) {
+    width: 170px;
+}
+
+
+
+/* ####################### lottery-list-user ####################### */
+/* table */
+.lottery-list-user .common-table td:nth-child(1),
+.lottery-list-user .common-table td:nth-child(3),
+.lottery-list-user .common-table td:nth-child(4),
+.lottery-list-user .common-table td:nth-child(5) {
+    text-align: center;
+}
+
+.lottery-list-user .common-table td:nth-child(4) {
+    color: #EF5DA8;
+}
+.lottery-list-user .common-table td:nth-child(4)>a>img,
+.lottery-list-user .common-table td:nth-child(5)>a {
+    transition: 0.35s;
+}
+.lottery-list-user .common-table td:nth-child(4)>a>img:hover,
+.lottery-list-user .common-table td:nth-child(5)>a:hover {
+    opacity: 0.8;
+}
+
+
+.lottery-list-user .common-table th:nth-child(1) {
+    width: 48px;
+}
+.lottery-list-user .common-table th:nth-child(2) {
+    width: 160px;
+}
+.lottery-list-user .common-table th:nth-child(3),
+.lottery-list-user .common-table th:nth-child(4) {
+    width: 70px;
+}
+.lottery-list-user .common-table th:nth-child(5) {
+    width: 114px;
+}
+
+/* ####################### application-user ####################### */
+.application-user .form-apply-setting {
+    /* border: 1px solid #000; */
+    /* overflow: scroll; */
+    width: 100%;
+    height: 460px;
+    padding: 0px 30px 0px 30px;
+}
+
+.application-user .form-apply-setting label input,
+.form-text-style {
+    border: 1px solid #bbb;
+    width: 100%;
+    height: 44px;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    transition: 0.35s;
+    margin-bottom: 0px;
+    position: relative;
+}
+
+.application-user .form-apply-setting label input:focus {
+    border-color: 1px solid #5D5FEF;
+}
+
+.application-user .form-apply-setting #form-setting legend {
+    font-family: 'Pretendard-SemiBold';
+    font-size: 16px;
+    padding-bottom: 6px;
+}
+.application-user .form-apply-setting #form-setting input {
+    margin-bottom: 20px;
+}
+
+
+/* footer */
+.application-user .common-footer {
+    height: 90px;
+    /* border: 1px solid #000; */
+}
+
+/* ####################### lottery-result-user ####################### */
+/* table */
+.lottery-result-user .common-table .badge-primary-2 {
+    padding: 5px 10px 5px 10px;
+}
+
+.lottery-result-user .lottery-result {
+    margin-bottom: 5px;
+}
+.lottery-result-user .common-table {
+    height: 340px;
+    /* border: 1px solid #000; */
+}
+
+.lottery-result-user .common-table td:nth-child(1),
+.lottery-result-user .common-table td:nth-child(3) {
+    text-align: center;
+}
+
+.lottery-result-user .common-table th:nth-child(1) {
+    width: 154px;
+}
+.lottery-result-user .common-table th:nth-child(2) {
+    width: 154px;
+}
+.lottery-result-user .common-table th:nth-child(3) {
+    width: 154px;
+}
+
+
+/* ####################### system-setting ####################### */
+.system-setting {
+    display: none;
+    border-radius: 10px;
+    box-shadow: 0 0 8px #aaa;
+    background-color: #fff;
+    position:fixed;
+    top: 64px;
+    left: 360px;
+    overflow: hidden;
+}
+
+.system-setting>* {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    transition: 0.35s;
+}
+.system-setting>*:hover {
+    background-color: #eee;
+}
+
+.system-setting>*>img {
+    padding: 0 5px 0 0px;
+}
+
+.system-setting .triangle {
+    width: 14px;
+    height: 14px;
+    rotate: 45deg;
+    background-color: #fff;
+    box-shadow: 0 0 4px #aaa;
+    position: fixed;
+    top: 60px;
+    left: 432px;
+    cursor: unset;
+    z-index: -10;
+}
+
+
