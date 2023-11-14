@@ -1,6 +1,7 @@
 import {oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {oAfreeca, CUSTOM_ACTION_CODE} from "./modules/afreeca.js";
+import oModal from "./modules/modal.js";
 
 const oMain = (() => {
     'use strict';
@@ -148,8 +149,9 @@ const oMain = (() => {
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
-                    // alert('해당 추첨 정보가 없습니다.');
-                    event.screenReset();
+                    oModal.errorModalShow('해당 추첨 정보가 없습니다.', (e) => {
+                        event.screenReset();
+                    });
                     return;
                 }
                 document.querySelector(selectorMap.raffleDetailInfoDiv).style.display = '';
@@ -186,7 +188,7 @@ const oMain = (() => {
                 // 추첨 추가하기 버튼 클릭 이벤트
                 document.querySelector(selectorMap.raffleAddShowBtn).addEventListener('click', () => {
                     if (RaffleListArray.length >= 5) {
-                        // alert('추첨은 최대 5개까지만 생성 가능합니다.');
+                        oModal.errorModalShow('추첨은 최대 5개까지만 생성 가능합니다.', (e) => {});
                         return;
                     }
                     render.raffleAddShowProc();
@@ -199,16 +201,18 @@ const oMain = (() => {
                     let validate = true;
 
                     if (raffleName === '') {
-                        // alert('추첨명을 입력해주세요.');
-                        document.querySelector(selectorMap.raffleAddSubjectInput).focus();
+                        oModal.errorModalShow('추첨명을 입력해주세요.', (e) => {
+                            document.querySelector(selectorMap.raffleAddSubjectInput).focus();
+                        });
                         return;
                     }
 
                     raffleColumnList.forEach((value, index) => {
                         if (value === '' && validate) {
                             validate = false;
-                            // alert('추첨 열명을 입력해주세요.');
-                            document.querySelectorAll(selectorMap.raffleAddColumnInput)[index].focus();
+                            oModal.errorModalShow('항목을 입력해주세요.', (e) => {
+                                document.querySelectorAll(selectorMap.raffleAddColumnInput)[index].focus();
+                            });
                         }
                     });
 
@@ -252,7 +256,7 @@ const oMain = (() => {
                 // 추첨 신청 열 제거
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnDeleteBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 1) {
-                        // alert('최소 1개 이상의 항목은 필요합니다.');
+                        oModal.errorModalShow('최소 1개 이상의 항목은 필요합니다.', (e) => {});
                         return;
                     }
                     event.target.closest(selectorMap.raffleAddColumnInputDiv).remove();
@@ -261,7 +265,7 @@ const oMain = (() => {
                 // 추첨 신청 열 추가
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnAddBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 5) {
-                        // alert('최대 5개까지만 추가 가능합니다.');
+                        oModal.errorModalShow('최대 5개까지만 추가 가능합니다.', (e) => {});
                         return;
                     }
                     event.target.closest(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
@@ -329,8 +333,9 @@ const oMain = (() => {
                     const selectRaffleInfo = RaffleListArray[raffleNo];
 
                     if (!selectRaffleInfo) {
-                        // alert('해당 추첨 정보가 없습니다.');
-                        event.screenReset();
+                        oModal.errorModalShow('해당 추첨 정보가 없습니다.', (e) => {
+                            event.screenReset();
+                        });
                         return;
                     }
                     // if (!confirm('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.')) {
@@ -370,23 +375,27 @@ const oMain = (() => {
                 let winnersInfo = [];
 
                 if (raffleInputCount === '') {
-                    // alert('추첨 인원을 입력해주세요.');
-                    document.querySelector(selectorMap.raffleInputCount).focus();
+                    oModal.errorModalShow('추첨 인원을 입력해주세요.', (e) => {
+                        document.querySelector(selectorMap.raffleInputCount).focus();
+                    });
                     return;
                 }
                 if (raffleInputCount <= 0) {
-                    // alert('추첨 인원을 1명 이상 입력해주세요.');
-                    document.querySelector(selectorMap.raffleInputCount).focus();
+                    oModal.errorModalShow('추첨 인원을 1명 이상 입력해주세요.', (e) => {
+                        document.querySelector(selectorMap.raffleInputCount).focus();
+                    });
                     return;
                 }
                 if (raffleInputCount > participantsInfo.length) {
-                    // alert('추첨 인원이 참가자 수보다 많습니다.');
-                    document.querySelector(selectorMap.raffleInputCount).focus();
+                    oModal.errorModalShow('추첨 인원이 참가자 수보다 많습니다.', (e) => {
+                        document.querySelector(selectorMap.raffleInputCount).focus();
+                    });
                     return;
                 }
                 if (raffleInputCount > raffleCheckCount) {
-                    // alert('선택된 참가자 수보다 추첨 인원이 많습니다.');
-                    document.querySelector(selectorMap.raffleInputCount).focus();
+                    oModal.errorModalShow('선택된 참가자 수보다 추첨 인원이 많습니다.', (e) => {
+                        document.querySelector(selectorMap.raffleInputCount).focus();
+                    });
                     return;
                 }
 
@@ -843,5 +852,6 @@ const oMain = (() => {
 (() => {
     oConfig.init();
     oAfreeca.init();
+    oModal.init();
     oMain.init();
 })();
