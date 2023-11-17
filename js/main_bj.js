@@ -32,6 +32,7 @@ const oMain = (() => {
         raffleStartBtn: '#raffle-detail-info-div .raffle-start-btn',
         raffleReStartBtn: '#raffle-detail-info-div .raffle-restart-btn',
         raffleInputCount: '#raffle-detail-info-div .raffle-input-count',
+        copyButton: '.copy-button'
     };
 
     const template = (() => {
@@ -90,9 +91,9 @@ const oMain = (() => {
                         <tr>
                             <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}<button onclick="copy('${info.nickName}')"><img src="../images/copy.svg" ></button></td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}<button onclick="copy('${USER_GRADE_NAME[info.grade]}')"><img src="../images/copy.svg" ></button></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}<button onclick="copy('${column}')"><img src="../images/copy.svg" ></button></td>`).join('')}
+                            <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}<img class="copy-button" src="../images/copy.svg" ></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
                         </tr>`).join('')}`;
             },
             raffleFinishDetailInfoThead: (raffleInfo) => {
@@ -108,9 +109,9 @@ const oMain = (() => {
                 return raffleInfo.winnersInfo.map((info, index) => `
                         <tr>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}<button onclick="copy('${info.nickName}')"><img src="../images/copy.svg" ></button></td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}<button onclick="copy('${USER_GRADE_NAME[info.grade]}')"><img src="../images/copy.svg" ></button></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}<button onclick="copy('${column}')"><img src="../images/copy.svg" ></button></td>`).join('')}
+                            <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}<img class="copy-button" src="../images/copy.svg" ></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
                         </tr>`).join('')
             },
             raffleStartBtn: (raffleNo) => {
@@ -186,10 +187,24 @@ const oMain = (() => {
     const event = (() => {
         return {
             init: () => {
+
+                // 복사하기 버튼 클릭 이벤트
+                oCommon.addDelegateTarget(document, 'click', selectorMap.copyButton, (event) => {
+                    const text = event.target.parentNode.textContent;
+                    navigator.clipboard.writeText(text)
+                        .then(() => {
+                            alert("복사 완료!")
+                        })
+                        .catch(err => {
+                            console.error('Unable to copy data:', err);
+                        });
+                });
+
                 // 추첨 추가하기 버튼 클릭 이벤트
                 document.querySelector(selectorMap.raffleAddShowBtn).addEventListener('click', () => {
                     if (RaffleListArray.length >= 5) {
-                        oModal.errorModalShow('추첨은 최대 5개까지만 생성 가능합니다.', (e) => {});
+                        oModal.errorModalShow('추첨은 최대 5개까지만 생성 가능합니다.', (e) => {
+                        });
                         return;
                     }
                     render.raffleAddShowProc();
@@ -257,7 +272,8 @@ const oMain = (() => {
                 // 추첨 신청 열 제거
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnDeleteBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 1) {
-                        oModal.errorModalShow('최소 1개 이상의 항목은 필요합니다.', (e) => {});
+                        oModal.errorModalShow('최소 1개 이상의 항목은 필요합니다.', (e) => {
+                        });
                         return;
                     }
                     event.target.closest(selectorMap.raffleAddColumnInputDiv).remove();
@@ -266,7 +282,8 @@ const oMain = (() => {
                 // 추첨 신청 열 추가
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnAddBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 5) {
-                        oModal.errorModalShow('최대 5개까지만 추가 가능합니다.', (e) => {});
+                        oModal.errorModalShow('최대 5개까지만 추가 가능합니다.', (e) => {
+                        });
                         return;
                     }
                     event.target.closest(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
@@ -848,8 +865,6 @@ const oMain = (() => {
         },
     };
 })();
-
-
 
 
 (() => {
