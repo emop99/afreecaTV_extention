@@ -34,6 +34,11 @@ const oMain = (() => {
         raffleInputCount: '#raffle-detail-info-div .raffle-input-count',
         copyButton: '.copy-button'
     };
+    const userGradeClassMap = {
+        1: 'badge-gray-1',
+        2: 'badge-primary-2',
+        3: 'badge-primary-1',
+    };
 
     const template = (() => {
         return {
@@ -92,7 +97,7 @@ const oMain = (() => {
                             <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}<img class="copy-button" src="../images/copy.svg" ></td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p><img class="copy-button" src="../images/copy.svg" ></td>
                             ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
                         </tr>`).join('')}`;
             },
@@ -110,7 +115,7 @@ const oMain = (() => {
                         <tr>
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}<img class="copy-button" src="../images/copy.svg" ></td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p><img class="copy-button" src="../images/copy.svg" ></td>
                             ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
                         </tr>`).join('')
             },
@@ -255,13 +260,11 @@ const oMain = (() => {
                 });
 
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, (event) => {
-                    if (!confirm('추첨 리스트 전체를 삭제하시겠습니까?')) {
-                        return false;
-                    }
-
-                    document.querySelector(selectorMap.systemSetting).style.display = 'none';
-                    RaffleListArray.length = 0;
-                    render.raffleList();
+                    oModal.confirmModal('추첨 리스트 전체를 삭제하시겠습니까?', '삭제', '취소', (e) => {
+                        document.querySelector(selectorMap.systemSetting).style.display = 'none';
+                        RaffleListArray.length = 0;
+                        render.raffleList();
+                    }, (e) => {});
                 });
 
                 // 1초마다 추첨 리스트 갱신
@@ -338,11 +341,9 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleStartBtn}`, (e) => {
                     const {raffleNo} = e.target.dataset;
 
-                    // if (!confirm('선택된 참여자로 추첨을 시작하시겠습니까?')) {
-                    //     return;
-                    // }
-
-                    event.raffleProc(raffleNo);
+                    oModal.confirmModal('선택된 참여자로 추첨을 시작하시겠습니까?', '시작', '취소', (e) => {
+                        event.raffleProc(raffleNo);
+                    }, (e) => {});
                 });
 
                 // 재추첨 시작 버튼 클릭 이벤트
@@ -356,15 +357,14 @@ const oMain = (() => {
                         });
                         return;
                     }
-                    // if (!confirm('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.')) {
-                    //     return;
-                    // }
 
-                    selectRaffleInfo.winnersInfo = [];
-                    selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
+                    oModal.confirmModal('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.', '재추첨', '취소', (e) => {
+                        selectRaffleInfo.winnersInfo = [];
+                        selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
-                    api.raffleWinnerReset(raffleNo, selectRaffleInfo);
-                    render.raffleDetailViewShowProc(raffleNo);
+                        api.raffleWinnerReset(raffleNo, selectRaffleInfo);
+                        render.raffleDetailViewShowProc(raffleNo);
+                    }, (e) => {});
                 });
             },
             raffleParticipantsCheckProc: (isCheck) => {
