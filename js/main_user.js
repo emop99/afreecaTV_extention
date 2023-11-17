@@ -278,6 +278,7 @@ const oMain = (() => {
                         render.raffleList();
                     } else if (action === CUSTOM_ACTION_CODE.SEND_WINNER_ALIM) {
                         //TODO 당첨자 알림
+                        alert("아싸 당첨")
                     }
                 });
 

@@ -144,7 +144,7 @@ const oMain = (() => {
                 document.querySelector(selectorMap.raffleAddDiv).style.display = '';
                 document.querySelector(selectorMap.mainDiv).style.display = 'none';
                 document.querySelector(selectorMap.raffleAddSubjectInput).value = '';
-                document.querySelector(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
+                // document.querySelector(selectorMap.raffleAddColumnDiv).insertAdjacentHTML('beforeend', template.columnInputDiv());
             },
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
