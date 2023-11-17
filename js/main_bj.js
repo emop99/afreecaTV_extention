@@ -85,13 +85,14 @@ const oMain = (() => {
                     return `<tr><td colspan="${raffleColumnList.length + 4}" class="text-center">참가자가 없습니다.</td></tr>`;
                 }
 
+                // TODO Implementation one click copy
                 return `${participantsInfo.map((info, index) => `
                         <tr>
                             <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}</td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
-                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
+                            <td class="">${info.nickName}<button onclick="copy('${info.nickName}')"><img src="../images/copy.svg" ></button></td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}<button onclick="copy('${USER_GRADE_NAME[info.grade]}')"><img src="../images/copy.svg" ></button></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}<button onclick="copy('${column}')"><img src="../images/copy.svg" ></button></td>`).join('')}
                         </tr>`).join('')}`;
             },
             raffleFinishDetailInfoThead: (raffleInfo) => {
@@ -107,9 +108,9 @@ const oMain = (() => {
                 return raffleInfo.winnersInfo.map((info, index) => `
                         <tr>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}</td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
-                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
+                            <td class="">${info.nickName}<button onclick="copy('${info.nickName}')"><img src="../images/copy.svg" ></button></td>
+                            <td class="">${USER_GRADE_NAME[info.grade]}<button onclick="copy('${USER_GRADE_NAME[info.grade]}')"><img src="../images/copy.svg" ></button></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}<button onclick="copy('${column}')"><img src="../images/copy.svg" ></button></td>`).join('')}
                         </tr>`).join('')
             },
             raffleStartBtn: (raffleNo) => {
@@ -413,7 +414,6 @@ const oMain = (() => {
                         }
                     }
                 }
-
                 selectRaffleInfo.winnersInfo = winnersInfo;
                 selectRaffleInfo.status = RAFFLE_STATE.FINISH;
                 render.raffleDetailViewShowProc(raffleNo);
@@ -517,337 +517,340 @@ const oMain = (() => {
 
     return {
         init: () => {
-            //TODO 초기데이터 테스트 셋팅
-            // RaffleListArray.push({
-            //     raffleName: '테스트1',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
-            //     status: RAFFLE_STATE.ING,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 '브론즈',
-            //                 'ghtyru231',
-            //                 '올라프장인',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru06',
-            //             nickName: 'ghtyru06',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru07',
-            //             nickName: 'ghtyru07',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru08',
-            //             nickName: 'ghtyru08',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru09',
-            //             nickName: 'ghtyru09',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru10',
-            //             nickName: 'ghtyru10',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            //     winnersInfo: [],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '테스트2',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
-            //     status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //     ],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '테스트3',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
-            //     status: RAFFLE_STATE.FINISH,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 '브론즈',
-            //                 'ghtyru231',
-            //                 '올라프장인',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru06',
-            //             nickName: 'ghtyru06',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru07',
-            //             nickName: 'ghtyru07',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru08',
-            //             nickName: 'ghtyru08',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru09',
-            //             nickName: 'ghtyru09',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru10',
-            //             nickName: 'ghtyru10',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            //     winnersInfo: [
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '참가자 없음',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
-            //     status: RAFFLE_STATE.ING,
-            //     participantsInfo: [],
-            // });
+            // TODO 초기데이터 테스트 셋팅
+            RaffleListArray.push({
+                raffleName: '테스트1',
+                raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
+                status: RAFFLE_STATE.ING,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            '브론즈',
+                            'ghtyru231',
+                            '올라프장인',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru06',
+                        nickName: 'ghtyru06',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru07',
+                        nickName: 'ghtyru07',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru08',
+                        nickName: 'ghtyru08',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru09',
+                        nickName: 'ghtyru09',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru10',
+                        nickName: 'ghtyru10',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+                winnersInfo: [],
+            });
+            RaffleListArray.push({
+                raffleName: '테스트2',
+                raffleColumnList: ['티어', '디스코드', '롤아이디'],
+                status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                ],
+            });
+            RaffleListArray.push({
+                raffleName: '테스트3',
+                raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
+                status: RAFFLE_STATE.FINISH,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            '브론즈',
+                            'ghtyru231',
+                            '올라프장인',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru06',
+                        nickName: 'ghtyru06',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru07',
+                        nickName: 'ghtyru07',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru08',
+                        nickName: 'ghtyru08',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru09',
+                        nickName: 'ghtyru09',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru10',
+                        nickName: 'ghtyru10',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+                winnersInfo: [
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+            });
+            RaffleListArray.push({
+                raffleName: '참가자 없음',
+                raffleColumnList: ['티어', '디스코드', '롤아이디'],
+                status: RAFFLE_STATE.ING,
+                participantsInfo: [],
+            });
             render.raffleList();
             event.init();
             messageListener.init();
         },
     };
 })();
+
+
+
 
 (() => {
     oConfig.init();

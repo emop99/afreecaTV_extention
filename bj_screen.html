@@ -126,6 +126,15 @@
 <script type="module" src="./js/main_bj.js"></script>
 
 <script>
+    function copy(text){
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                alert("복사 완료!")
+            })
+            .catch(err => {
+                console.error('Unable to copy data:', err);
+            });
+    }
     $('.settings-btn').mouseenter(function () {
         $('.system-setting').stop().fadeIn()
     })
