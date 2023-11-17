@@ -33,6 +33,11 @@ const oMain = (() => {
         raffleReStartBtn: '#raffle-detail-info-div .raffle-restart-btn',
         raffleInputCount: '#raffle-detail-info-div .raffle-input-count',
     };
+    const userGradeClassMap = {
+        1: 'badge-gray-1',
+        2: 'badge-primary-2',
+        3: 'badge-primary-1',
+    };
 
     const template = (() => {
         return {
@@ -90,7 +95,7 @@ const oMain = (() => {
                             <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}</td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
                             ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')}`;
             },
@@ -108,7 +113,7 @@ const oMain = (() => {
                         <tr>
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}</td>
-                            <td class="">${USER_GRADE_NAME[info.grade]}</td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
                             ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')
             },
