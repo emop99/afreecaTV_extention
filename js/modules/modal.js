@@ -22,7 +22,7 @@ const oModal = (() => {
                             <img src="./images/icon-error-fill.svg" alt="icon-error">
                             <h1>Error!</h1>
                             <p>${message}</p>
-                            <a href="javascript:;" class="modal-close-btn">닫기</a>
+                            <a href="javascript:;" class="error-close-btn modal-close-btn">닫기</a>
                         </div>`;
             },
             confirmModal: (message, successBtnName, closeBtnName) => {
