@@ -111,6 +111,14 @@ input::-webkit-search-results-decoration {
     padding: 10px;
 }
 
+.lottery-list-user .common-container,
+.application-user .common-container,
+.lottery-result-user .common-container {
+    width: 100%;
+    height: 640px;
+    padding: 10px;
+}
+
 
 /* ####################### common-header ####################### */
 .common-header {
@@ -617,7 +625,6 @@ input::-webkit-search-results-decoration {
 /* footer */
 .application-user .common-footer {
     height: 90px;
-    /* border: 1px solid #000; */
 }
 
 /* ####################### lottery-result-user ####################### */
@@ -699,9 +706,9 @@ input::-webkit-search-results-decoration {
 /* ####################### error-modal ####################### */
 .error-modal,
 .confirm-modal {
-    width: 500px;
-    height: 640px;
-    background-color: hwb(0 0% 100% / 0.8);
+    width: 100%;
+    height: 100vh;
+    background-color: #000000CC;
     position: fixed;
     top: 0;
     left: 0;
@@ -743,7 +750,7 @@ input::-webkit-search-results-decoration {
     font-family: 'Pretendard-Regular';
     font-size: 14px;
     color: #777;
-    margin-top: -20px;
+    padding-top: -20px;
 }
 
 .error-modal .modal-container .error-close-btn {
