@@ -1,6 +1,6 @@
-import {oConfig, USER_GRADE, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME} from './modules/config.js';
+import {oConfig, USER_GRADE, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE, LOADING_USER_DEFAULT_INFO} from './modules/config.js';
 import oCommon from "./modules/common.js";
-import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
+import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
 
 const oMain = (() => {
@@ -266,6 +266,7 @@ const oMain = (() => {
                         document.querySelector(selectorMap.systemSetting).style.display = 'none';
                         RaffleListArray.length = 0;
                         render.raffleList();
+                        api.raffleAllReset();
                     }, (e) => {
                     });
                 });
@@ -551,6 +552,18 @@ const oMain = (() => {
             raffleAllReset: () => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.RAFFLE_ALL_RESET, null);
             },
+            /**
+             * WEPL 접속 유저 정보 전송
+             * @param userInfoObj {userId: string, userNickname: string, userStatus: Object}
+             */
+            userInfoSend: (userInfoObj) => {
+                const {userId, userNickname, userStatus} = userInfoObj;
+                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
+                    userId,
+                    userNickname,
+                    userStatus,
+                }));
+            },
         };
     })();
 
@@ -589,6 +602,17 @@ const oMain = (() => {
                         if (message.length) {
                             oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify(message));
                         }
+                    }
+                });
+
+                oAfreeca.api.chatListen((action, messageObj) => {
+                    switch (action) {
+                        case ACTION_CODE.MESSAGE:
+                            if (messageObj.message === WEPL_RUNNING_MESSAGE) {
+                                // 닉네임 추출을 위해 WEPL 실행 메시지가 오면 정보 전송
+                                api.userInfoSend(messageObj);
+                            }
+                            break;
                     }
                 });
             },

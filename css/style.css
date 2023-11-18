@@ -14,10 +14,9 @@
 }
 
 /* @@@@@@@@@@@ 페이지 한눈에 보기+아웃라인 @@@@@@@@@@@ */
-body .tot-container {
-    display: flex;
-}
-
+/* body .tot-container {
+  display: flex;
+} */
 .common-container {
     border: 1px solid #000;
 }

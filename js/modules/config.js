@@ -42,6 +42,25 @@ const RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET = {
     customColumn: [], // BJ 설정 항목 유저 입력 리스트 (USER 데이터에서는 제외)
 };
 
+const LOADING_USER_DEFAULT_INFO = {
+    userId: '', // 유저 아이디
+    userNickname: '', // 유저 닉네임
+    userStatus: {
+        isBJ: 0, // BJ 여부
+        isManager: 0, // 매니저 여부
+        isGuest: 0, // 로그인 여부
+        isTopFan: 0, // 열혈팬 여부
+        isFemale: 0, // 여성 여부
+        isHideSex: 0, // 성별 숨김 여부
+        isFan: 0, // 팬 여부
+        isFollower: 0, // 구독자 여부
+        isSupporter: 0, // 서포터 여부
+        hasAppliedQuickview: 0, // 퀵뷰 사용 여부
+    },
+};
+
+const WEPL_RUNNING_MESSAGE = `WEPL 실행합니다!`;
+
 const oConfig = (() => {
     'use strict';
 
@@ -57,4 +76,14 @@ const oConfig = (() => {
     };
 })();
 
-export {oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_PARTICIPANTS_INFO_DEFAULT_DATA_SET, RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET};
+export {
+    oConfig,
+    RAFFLE_STATE,
+    USER_GRADE,
+    USER_GRADE_NAME,
+    RAFFLE_INFO_DEFAULT_DATA_SET,
+    RAFFLE_PARTICIPANTS_INFO_DEFAULT_DATA_SET,
+    RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET,
+    WEPL_RUNNING_MESSAGE,
+    LOADING_USER_DEFAULT_INFO
+};

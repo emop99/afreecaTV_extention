@@ -9,6 +9,7 @@ const CUSTOM_ACTION_CODE = {
     SEND_WINNER_INFO: 'SEND_WINNER_INFO', // 추첨 당첨자 정보 전송
     CHANGE_RAFFLE_HEAD_COUNT: 'CHANGE_RAFFLE_HEAD_COUNT', // 추첨 신청 인원 변경
     RAFFLE_ALL_RESET: 'RAFFLE_ALL_RESET', // 추첨 정보 전체 초기화
+    LOADING_USER_INFO: 'LOADING_USER_INFO', // WEPL 실행 시 유저 정보 가져오기
 };
 const ACTION_CODE = {
     JOIN: 'JOIN',
@@ -102,6 +103,19 @@ const oAfreeca = (() => {
              */
             chatListen: (callback) => {
                 extensionSDK.chat.listen(callback);
+            },
+            /**
+             * 채팅 채널의 특정 서비스에 메세지를 발신합니다.
+             * - 채팅 서비스 코드 (‘MESSAGE’만 가능합니다.)
+             * @param message String, Object 메세지
+             */
+            chatSend: (message) => {
+                if (oConfig.isDev()) {
+                    console.log('chatSend');
+                    console.log(`message : ${message}`);
+                    console.log(`=============================================`);
+                }
+                extensionSdk.chat.send('MESSAGE', message);
             },
         },
     };

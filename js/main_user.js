@@ -1,6 +1,6 @@
-import {oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME} from './modules/config.js';
+import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
 import oCommon from "./modules/common.js";
-import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
+import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
 
 const oMain = (() => {
@@ -29,22 +29,7 @@ const oMain = (() => {
         3: 'badge-primary-1',
     };
 
-    let userInfo = {
-        userId: '', // : String 유저 아이디
-        userNickname: '', // : String 유저 닉네임
-        userStatus: {
-            isBJ: false, // : Boolean BJ 여부
-            isManager: false, // : Boolean 매니저 여부
-            isGuest: false, // : Boolean 로그인 여부
-            isTopFan: false, // : Boolean 열혈팬 여부
-            isFemale: false, // : Boolean 여성 여부
-            isHideSex: false, // : Boolean 성별 숨김 여부
-            isFan: false, // : Boolean 팬 여부
-            isFollower: false, // : Boolean 구독자 여부
-            isSupporter: false, // : Boolean 서포터 여부
-            hasAppliedQuickview: false, // : Boolean 퀵뷰 사용 여부
-        },
-    };
+    let userInfo = LOADING_USER_DEFAULT_INFO;
 
 
     const template = (() => {
@@ -431,20 +416,12 @@ const oMain = (() => {
                     } else if (action === CUSTOM_ACTION_CODE.RAFFLE_ALL_RESET) {
                         // 추첨 정보 전체 초기화 메시지 수신
                         RaffleListArray.length = 0;
+                    } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_INFO) {
+                        userInfo = JSON.parse(message);
                     }
                 });
 
-                oAfreeca.api.chatListen((action, message) => {
-                    if (oConfig.isDev()) {
-                        console.log(`oAfreeca.api.chatListen`);
-                        console.log(`action : ${action}`);
-                        console.log(`message : ${message}`);
-                        console.log(`====================================================`);
-                    }
-                    if (action === ACTION_CODE.IN) {
-                        userInfo = message;
-                    }
-                });
+                oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
             },
         };
     })();
