@@ -446,7 +446,7 @@ const oMain = (() => {
                 api.raffleWinnerInfoChange(raffleNo, winnersInfo);
 
                 winnersInfo.forEach((winnersInfoRow) => {
-                    api.raffleWinnerAlimSend(winnersInfoRow);
+                    api.raffleWinnerAlimSend(raffleNo, winnersInfoRow);
                 });
             },
             screenReset: () => {
@@ -527,11 +527,14 @@ const oMain = (() => {
             },
             /**
              * 추첨 당첨자 알림
+             * @param raffleNo {int}
              * @param winnersInfo {RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET}
              */
-            raffleWinnerAlimSend: (winnersInfo) => {
+            raffleWinnerAlimSend: (raffleNo, winnersInfo) => {
                 const {userId} = winnersInfo;
-                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, null);
+                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, JSON.stringify({
+                    raffleNo
+                }));
             },
             /**
              * 추첨 인원 변경

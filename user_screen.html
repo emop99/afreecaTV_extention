@@ -3,64 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--TODO 타이틀명 변경-->
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/bootstrap.css"/>
+    <title>AfreecaTV 랜덤뽑기 PC팝업 BJ</title>
     <script defer src="https://static.afreecatv.com/asset/app/extension-helper/afreecatv-extension-sdk.js"></script>
-    <link rel="stylesheet" href="/css/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/style.css">
-    <script src="/js/lib/bootstrap.js"></script>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/lib/jquery-1.12.4.js"></script>
 </head>
 
 <body>
-<div class="container top-container" id="main-div">
-    <h1 class="custom-title">추첨 리스트</h1>
-    <div class="table-container">
-        <table class="table table-hover table-sm caption-top">
-            <thead class="table-light">
-            <tr>
-                <th scope="col" class="text-center">No.</th>
-                <th scope="col" class="text-center">제목</th>
-                <th scope="col" class="text-center">현황</th>
-                <th scope="col" class="text-center">상세보기</th>
-            </tr>
-            </thead>
-            <tbody id="raffle-list-tbody">
-            </tbody>
-        </table>
-    </div>
-</div>
-<div class="container top-container" id="raffle-participation-div" style="display: none;">
-    <h1 class="custom-title"></h1>
-    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
-
-    <div class="container">
-        <div id="raffle-input-participation-column-div">
+<div class="tot-container top-container" id="main-div">
+    <div class="lottery-list-bj">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2>추첨 리스트</h2></div>
+            </div>
+            <div class="common-table">
+                <table>
+                    <thead class="table-light">
+                    <tr class="table-head">
+                        <th>No.</th>
+                        <th>제목</th>
+                        <th>인원</th>
+                        <th>마감</th>
+                        <th>상세보기</th>
+                    </tr>
+                    </thead>
+                    <tbody id="raffle-list-tbody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+</div>
 
-    <div class="fixed-bottom text-center">
-        <button type="button" class="btn btn-primary btn-lg center-block" id="raffle-participation-success-btn">완료</button>
+<div class="container top-container" id="raffle-participation-div" style="display: none;">
+    <div class="application-user">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2></h2></div>
+                <div class="header-icons">
+                    <div class="close-btn"><a class="close" href="javascript:;"><img src="./images/icon-close.svg" alt="icon-settings"></a></div>
+                </div>
+            </div>
+            <div class="form-apply-setting">
+                <form id="raffle-input-participation-column-div">
+                </form>
+            </div>
+            <div class="common-footer">
+                <div class="result-btn"><a href="javascript:;" id="raffle-participation-success-btn">완료</a></div>
+            </div>
+        </div>
     </div>
 </div>
+
 <div class="container top-container" id="raffle-detail-info-div" style="display: none;">
-    <h1 class="custom-title"></h1>
-    <button type="button" class="close btn-close position-absolute top-0 end-0"></button>
-
-    <div class="table-container">
-        <table class="table table-hover table-sm caption-top" id="raffle-detail-info-table">
-            <thead class="table-light" id="raffle-detail-info-thead">
-            </thead>
-            <tbody id="raffle-detail-info-tbody">
-            </tbody>
-        </table>
-    </div>
-
-    <div class="fixed-bottom text-center">
+    <div class="lottery-result-user">
+        <div class="common-container">
+            <div class="common-header">
+                <div class="header-title"><h2></h2></div>
+                <div class="header-icons">
+                    <div class="close-btn"><a href="javascript:;" class="close"><img src="./images/icon-close.svg" alt="icon-settings"></a></div>
+                </div>
+            </div>
+            <div class="lottery-result">
+            </div>
+            <div class="common-table">
+                <table id="raffle-detail-info-table">
+                    <thead id="raffle-detail-info-thead">
+                    <tr class="table-head">
+                        <th>No.</th>
+                        <th>닉네임<a href="javascript:;"><img src="./images/icon-arrow-drop-down.svg" alt="icon-arrow-drop-down"></a></th>
+                        <th>등급</th>
+                    </tr>
+                    </thead>
+                    <tbody id="raffle-detail-info-tbody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+
+<div class="" id="modal-div" style="display: none;"></div>
 </body>
 
-<script type="module" src="/js/main_user.js"></script>
+<script type="module" src="./js/main_user.js"></script>
 
 </html>
