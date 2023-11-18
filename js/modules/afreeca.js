@@ -1,9 +1,11 @@
 const CUSTOM_ACTION_CODE = {
-    CREATE_RAFFLE: 'CREATE_RAFFLE',
-    ADD_RAFFLE_PARTICIPANT: 'ADD_RAFFLE_PARTICIPANT',
-    CHANGE_RAFFLE_INFO: 'CHANGE_RAFFLE_INFO',
-    SEND_WINNER_ALIM: 'SEND_WINNER_ALIM',
-    LOADING_USER_RAFFLE_INFO: 'LOADING_USER_RAFFLE_INFO',
+    CREATE_RAFFLE: 'CREATE_RAFFLE', // 신규 추첨 생성
+    ADD_RAFFLE_PARTICIPANT: 'ADD_RAFFLE_PARTICIPANT', // 추첨 참여자 추가
+    CHANGE_RAFFLE_INFO: 'CHANGE_RAFFLE_INFO', // 추첨 정보 변경
+    SEND_WINNER_ALIM: 'SEND_WINNER_ALIM', // 추첨 당첨자 알림
+    LOADING_USER_RAFFLE_INFO: 'LOADING_USER_RAFFLE_INFO', // 유저 화면 로딩 시 추첨 정보 가져오기
+    SEND_WINNER_INFO: 'SEND_WINNER_INFO', // 추첨 당첨자 정보 전송
+    CHANGE_RAFFLE_HEAD_COUNT: 'CHANGE_RAFFLE_HEAD_COUNT', // 추첨 신청 인원 변경
 };
 const ACTION_CODE = {
     JOIN: 'JOIN',
@@ -35,6 +37,8 @@ const ACTION_CODE = {
 };
 
 const oAfreeca = (() => {
+    'use strict';
+
     let extensionSDK = null;
 
     return {

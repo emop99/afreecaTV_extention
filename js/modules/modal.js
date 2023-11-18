@@ -1,6 +1,8 @@
 import oCommon from "./common.js";
 
 const oModal = (() => {
+    'use strict';
+    
     const modalTypeClassMap = {
         errorModal: 'error-modal',
         confirmModal: 'confirm-modal',

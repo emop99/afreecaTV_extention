@@ -1,4 +1,4 @@
-import {oConfig, RAFFLE_STATE, USER_GRADE_NAME, USER_GRADE} from './modules/config.js';
+import {oConfig, USER_GRADE, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -12,6 +12,7 @@ const oMain = (() => {
         systemSetting: '.system-setting',
         raffleAddDiv: '#raffle-add-div',
         raffleDetailInfoDiv: '#raffle-detail-info-div',
+        raffleDetailInfoTitleHeaderDiv: '#raffle-detail-info-div .header-title h2',
         raffleListTbody: '#raffle-list-tbody',
         raffleAddShowBtn: '#raffle-add-show-btn',
         raffleAddColumnInputDiv: '.add-column-input-div',
@@ -23,6 +24,8 @@ const oMain = (() => {
         columnDeleteBtn: '.raffle-add-column-div .remove-form-btn',
         columnAddBtn: '.raffle-add-column-div .column-add-btn',
         raffleDetailViewBtn: '#raffle-list-tbody .raffle-detail-view-btn',
+        raffleDetailInfoFooterButtonDiv: '#raffle-detail-info-div .common-footer .result-btn',
+        raffleDetailInfoFooterWinnerInputFormDiv: '#raffle-detail-info-div .common-footer .lottery-number-from',
         raffleDetailInfoTable: '#raffle-detail-info-div #raffle-detail-info-table',
         raffleDetailInfoThead: '#raffle-detail-info-div #raffle-detail-info-thead',
         raffleDetailInfoTbody: '#raffle-detail-info-div #raffle-detail-info-tbody',
@@ -32,7 +35,7 @@ const oMain = (() => {
         raffleStartBtn: '#raffle-detail-info-div .raffle-start-btn',
         raffleReStartBtn: '#raffle-detail-info-div .raffle-restart-btn',
         raffleInputCount: '#raffle-detail-info-div .raffle-input-count',
-        copyButton: '.copy-button'
+        copyButton: '.copy-button',
     };
     const userGradeClassMap = {
         1: 'badge-gray-1',
@@ -43,20 +46,22 @@ const oMain = (() => {
     const template = (() => {
         return {
             emptyRaffleList: () => {
-                return `<tr><td colspan="5" class="text-center">추첨 리스트가 없습니다.</td></tr>`;
+                return `<tr><td colspan="5">추첨 리스트가 없습니다.</td></tr>`;
             },
             raffleList: () => {
                 return RaffleListArray.map((row, index) => {
                     const raffleNo = index;
+                    // <a href="javascript:;" className="list-close-btn raffle-finishing-btn" data-raffle-no="0"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="0"></a>
+                    // <a href="#none" class="list-close-btn"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box"></a>
                     return `<tr>
-                                <td class="text-center">${raffleNo + 1}</td>
+                                <td>${raffleNo + 1}</td>
                                 <td>${row.raffleName}</td>
-                                <td class="text-center">${row.participantsInfo.length.toLocaleString('ko')}</td>
-                                <td class="text-center">
+                                <td>${row.participantsInfo.length.toLocaleString('ko')}</td>
+                                <td>
                                     ${row.status === RAFFLE_STATE.ING ? `<a href="javascript:;" class="list-close-btn raffle-finishing-btn" data-raffle-no="${raffleNo}"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="${raffleNo}"></a>` :
                         row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED || row.status === RAFFLE_STATE.FINISH ? template.finishingText() : ''}
                                 </td>
-                                <td class="text-center">
+                                <td>
                                     ${row.status === RAFFLE_STATE.ING || row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED ?
                         `<a href="javascript:;" class="badge-primary-1 raffle-detail-view-btn" data-raffle-no="${raffleNo}">상세보기</a>` :
                         row.status === RAFFLE_STATE.FINISH ? `<a href="javascript:;" class="badge-primary-2 raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</a>` :
@@ -81,24 +86,23 @@ const oMain = (() => {
                             <th class="">No.</th>
                             <th class="">닉네임</th>
                             <th class="">등급</th>
-                            ${raffleColumnList.map((column) => `<th class="text-center">${column}</th>`).join('')}
+                            ${raffleColumnList.map((column) => `<th>${column}</th>`).join('')}
                         </tr>`;
             },
             raffleNotFinishDetailInfoTbody: (raffleInfo) => {
                 const {participantsInfo, raffleColumnList} = raffleInfo;
 
                 if (participantsInfo.length === 0) {
-                    return `<tr><td colspan="${raffleColumnList.length + 4}" class="text-center">참가자가 없습니다.</td></tr>`;
+                    return `<tr><td colspan="${raffleColumnList.length + 4}">참가자가 없습니다.</td></tr>`;
                 }
 
-                // TODO Implementation one click copy
                 return `${participantsInfo.map((info, index) => `
                         <tr>
                             <td class="fix-column"><input class="form-check-input large-checkbox participants-check" type="checkbox" value="${index}"></td>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
-                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p><img class="copy-button" src="../images/copy.svg" ></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
+                            <td class="">${info.nickName}</td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')}`;
             },
             raffleFinishDetailInfoThead: (raffleInfo) => {
@@ -114,9 +118,9 @@ const oMain = (() => {
                 return raffleInfo.winnersInfo.map((info, index) => `
                         <tr>
                             <td class="">${index + 1}</td>
-                            <td class="">${info.nickName}<img class="copy-button" src="../images/copy.svg" ></td>
-                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p><img class="copy-button" src="../images/copy.svg" ></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}<img class="copy-button" src="../images/copy.svg" ></td>`).join('')}
+                            <td class="">${info.nickName}</td>
+                            <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
+                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
                         </tr>`).join('')
             },
             raffleStartBtn: (raffleNo) => {
@@ -166,15 +170,15 @@ const oMain = (() => {
                 }
                 document.querySelector(selectorMap.raffleDetailInfoDiv).style.display = '';
                 document.querySelector(selectorMap.mainDiv).style.display = 'none';
-                document.querySelector(`${selectorMap.raffleDetailInfoDiv} .header-title h2`).innerHTML = `${selectRaffleInfo.raffleName}`;
+                document.querySelector(selectorMap.raffleDetailInfoTitleHeaderDiv).innerHTML = `${selectRaffleInfo.raffleName}`;
                 document.querySelector(selectorMap.raffleSearchInput).value = '';
                 document.querySelector(selectorMap.raffleDetailInfoTable).style.width = (selectRaffleInfo.raffleColumnList.length + 4) * 130 >= 500 ? `${(selectRaffleInfo.raffleColumnList.length + 3) * 130}px` : `100%`;
 
                 if (selectRaffleInfo.status === RAFFLE_STATE.ING || selectRaffleInfo.status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
                     document.querySelector(selectorMap.raffleDetailInfoThead).innerHTML = template.raffleNotFinishDetailInfoThead(selectRaffleInfo);
                     document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = template.raffleNotFinishDetailInfoTbody(selectRaffleInfo);
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .result-btn`).innerHTML = template.raffleStartBtn(raffleNo);
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .lottery-number-from`).style.display = '';
+                    document.querySelector(selectorMap.raffleDetailInfoFooterButtonDiv).innerHTML = template.raffleStartBtn(raffleNo);
+                    document.querySelector(selectorMap.raffleDetailInfoFooterWinnerInputFormDiv).style.display = '';
                     document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.add('application-list-bj');
                     document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.remove('random-lottery-bj');
                     document.querySelector(selectorMap.raffleParticipantsAllCheck).checked = true;
@@ -182,11 +186,10 @@ const oMain = (() => {
                 } else if (selectRaffleInfo.status === RAFFLE_STATE.FINISH) {
                     document.querySelector(selectorMap.raffleDetailInfoThead).innerHTML = template.raffleFinishDetailInfoThead(selectRaffleInfo);
                     document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = template.raffleFinishDetailInfoTbody(selectRaffleInfo);
-
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .lottery-number-from`).style.display = 'none';
+                    document.querySelector(selectorMap.raffleDetailInfoFooterButtonDiv).innerHTML = template.raffleReStartBtn(raffleNo);
+                    document.querySelector(selectorMap.raffleDetailInfoFooterWinnerInputFormDiv).style.display = 'none';
                     document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.remove('application-list-bj');
                     document.querySelector(`${selectorMap.raffleDetailInfoDiv} div`).classList.add('random-lottery-bj');
-                    document.querySelector(`${selectorMap.raffleDetailInfoDiv} .common-footer .result-btn`).innerHTML = template.raffleReStartBtn(raffleNo);
                 }
             },
         };
@@ -241,16 +244,16 @@ const oMain = (() => {
                     if (!validate) return;
 
                     RaffleListArray.push({
-                        raffleName: raffleName,
-                        raffleColumnList: raffleColumnList,
+                        ...RAFFLE_INFO_DEFAULT_DATA_SET,
+                        raffleName,
+                        raffleColumnList,
                         status: RAFFLE_STATE.ING,
-                        participantsInfo: [],
-                        winnersInfo: [],
                     });
+                    RaffleListArray[RaffleListArray.length - 1].raffleNo = RaffleListArray.length - 1;
 
                     render.raffleList();
 
-                    api.raffleCreate(RaffleListArray.length - 1, RaffleListArray[RaffleListArray.length - 1]);
+                    api.raffleCreate(RaffleListArray[RaffleListArray.length - 1]);
                 });
 
                 // close button event
@@ -270,9 +273,9 @@ const oMain = (() => {
                 });
 
                 // 1초마다 추첨 리스트 갱신
-                setInterval(() => {
-                    render.raffleListRefresh();
-                }, 1000);
+                // setInterval(() => {
+                //     render.raffleListRefresh();
+                // }, 1000);
 
                 // 추첨 신청 열 제거
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnDeleteBtn}`, (event) => {
@@ -302,7 +305,7 @@ const oMain = (() => {
 
                     event.target.closest('td').innerHTML = template.finishingText();
 
-                    api.raffleStateChange(raffleNo, RaffleListArray[raffleNo]);
+                    api.raffleStateChange(raffleNo, RaffleListArray[raffleNo].status);
                 });
 
                 // 추첨 상세보기 / 추첨완료 버튼 이벤트
@@ -365,7 +368,7 @@ const oMain = (() => {
                         selectRaffleInfo.winnersInfo = [];
                         selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
-                        api.raffleWinnerReset(raffleNo, selectRaffleInfo);
+                        api.raffleWinnerReset(raffleNo);
                         render.raffleDetailViewShowProc(raffleNo);
                     }, (e) => {
                     });
@@ -439,7 +442,12 @@ const oMain = (() => {
                 selectRaffleInfo.status = RAFFLE_STATE.FINISH;
                 render.raffleDetailViewShowProc(raffleNo);
 
-                api.raffleWinnerAlimSend(winnersInfo);
+                api.raffleStateChange(raffleNo, selectRaffleInfo.status);
+                api.raffleWinnerInfoChange(raffleNo, winnersInfo);
+
+                winnersInfo.forEach((winnersInfoRow) => {
+                    api.raffleWinnerAlimSend(winnersInfoRow);
+                });
             },
             screenReset: () => {
                 document.querySelectorAll('.top-container').forEach((element) => {
@@ -456,12 +464,14 @@ const oMain = (() => {
                 }
 
                 if (RaffleListArray[raffleNo].participantsInfo.filter((info) => info.userId === userId).length > 0) {
+                    // 이미 존재하는 유저 정보라면 업데이트
                     RaffleListArray[raffleNo].participantsInfo.filter((info) => {
                         if (info.userId === userId) {
                             info.customColumn = customColumn;
                         }
                     });
                 } else {
+                    // 존재하지 않는 유저 정보라면 추가
                     RaffleListArray[raffleNo].participantsInfo.push({
                         userId, nickName, grade, customColumn,
                     });
@@ -474,39 +484,65 @@ const oMain = (() => {
 
     const api = (() => {
         return {
-            raffleCreate: (index, raffleInfo) => {
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
-                    raffleNo: index,
-                    raffleName: raffleInfo.raffleName,
-                    raffleColumnList: raffleInfo.raffleColumnList,
-                    status: raffleInfo.status,
-                    headCount: raffleInfo.headCount,
+            /**
+             * 추첨 생성
+             * @param raffleInfo {RAFFLE_INFO_DEFAULT_DATA_SET}
+             */
+            raffleCreate: (raffleInfo) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify(raffleInfo));
+            },
+            /**
+             * 추첨 상태 변경
+             * @param raffleNo {int}
+             * @param status {RAFFLE_STATE}
+             */
+            raffleStateChange: (raffleNo, status) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
+                    raffleNo,
+                    status,
                 }));
             },
-            raffleStateChange: (raffleIndex, raffleInfo) => {
+            /**
+             * 추첨 재추첨 처리를 위한 추첨 정보 초기화
+             * @param raffleNo {int}
+             */
+            raffleWinnerReset: (raffleNo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
-                    raffleNo: raffleIndex,
-                    raffleName: raffleInfo.raffleName,
-                    raffleColumnList: raffleInfo.raffleColumnList,
-                    status: raffleInfo.status,
-                    headCount: raffleInfo.headCount,
-                }));
-            },
-            raffleWinnerReset: (raffleIndex, raffleInfo) => {
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
-                    raffleNo: raffleIndex,
-                    raffleName: raffleInfo.raffleName,
-                    raffleColumnList: raffleInfo.raffleColumnList,
-                    status: raffleInfo.status,
-                    headCount: raffleInfo.headCount,
+                    raffleNo,
                     winnersInfo: [],
+                    isParticipants: 0,
+                    isWinner: 0,
                 }));
             },
+            /**
+             * 추첨 당첨자 정보 변경
+             * @param raffleNo {int}
+             * @param winnersInfo {[RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET]}
+             */
+            raffleWinnerInfoChange: (raffleNo, winnersInfo) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
+                    raffleNo,
+                    winnersInfo,
+                }));
+            },
+            /**
+             * 추첨 당첨자 알림
+             * @param winnersInfo {RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET}
+             */
             raffleWinnerAlimSend: (winnersInfo) => {
-                winnersInfo.forEach((info) => {
-                    const {userId} = info;
-                    oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, null);
-                });
+                const {userId} = winnersInfo;
+                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, null);
+            },
+            /**
+             * 추첨 인원 변경
+             * @param raffleNo {int}
+             * @param headCount {int}
+             */
+            raffleHeadCountChange: (raffleNo, headCount) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_HEAD_COUNT, JSON.stringify({
+                    raffleNo,
+                    headCount,
+                }));
             },
         };
     })();
@@ -516,15 +552,24 @@ const oMain = (() => {
             init: () => {
                 oAfreeca.api.broadcastListener((action, message, fromId) => {
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
+                        // 추첨 참가자 추가
+                        const messageJson = JSON.parse(message);
+                        const {raffleNo, nickName, grade, customColumn} = messageJson;
+
                         event.addRaffleParticipant(message, fromId);
+                        api.raffleHeadCountChange(raffleNo, RaffleListArray[raffleNo].headCount);
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO) {
-                        const message = RaffleListArray.map((raffleInfo, index) => {
+                        // 유저 화면 로딩 시 추첨 정보 가져오기
+                        const message = RaffleListArray.map((raffleInfo) => {
+                            // 최대 Byte 제한으로 인해 정보 최소화
                             return {
-                                raffleNo: index,
+                                raffleNo: raffleInfo.raffleNo,
                                 raffleName: raffleInfo.raffleName,
                                 status: raffleInfo.status,
-                                isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId),
+                                isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId) ? 1 : 0,
                                 raffleColumnList: raffleInfo.raffleColumnList,
+                                headCount: raffleInfo.headCount,
+                                isWinner: raffleInfo.winnersInfo.some((info) => info.userId === fromId) ? 1 : 0,
                             };
                         });
                         if (message.length) {
@@ -539,330 +584,330 @@ const oMain = (() => {
     return {
         init: () => {
             // TODO 초기데이터 테스트 셋팅
-            // RaffleListArray.push({
-            //     raffleName: '테스트1',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
-            //     status: RAFFLE_STATE.ING,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 '브론즈',
-            //                 'ghtyru231',
-            //                 '올라프장인',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru06',
-            //             nickName: 'ghtyru06',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru07',
-            //             nickName: 'ghtyru07',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru08',
-            //             nickName: 'ghtyru08',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru09',
-            //             nickName: 'ghtyru09',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru10',
-            //             nickName: 'ghtyru10',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            //     winnersInfo: [],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '테스트2',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
-            //     status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 'column1',
-            //                 'column2',
-            //                 'column3',
-            //             ],
-            //         },
-            //     ],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '테스트3',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
-            //     status: RAFFLE_STATE.FINISH,
-            //     participantsInfo: [
-            //         {
-            //             userId: 'ghtyru01',
-            //             nickName: 'ghtyru01',
-            //             grade: USER_GRADE.VIP,
-            //             customColumn: [
-            //                 '브론즈',
-            //                 'ghtyru231',
-            //                 '올라프장인',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru02',
-            //             nickName: 'ghtyru02',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru03',
-            //             nickName: 'ghtyru03',
-            //             grade: USER_GRADE.NORMAL,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru06',
-            //             nickName: 'ghtyru06',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '다이아몬드',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru07',
-            //             nickName: 'ghtyru07',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru08',
-            //             nickName: 'ghtyru08',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru09',
-            //             nickName: 'ghtyru09',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru10',
-            //             nickName: 'ghtyru10',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            //     winnersInfo: [
-            //         {
-            //             userId: 'ghtyru04',
-            //             nickName: 'ghtyru04',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //         {
-            //             userId: 'ghtyru05',
-            //             nickName: 'ghtyru05',
-            //             grade: USER_GRADE.FAN,
-            //             customColumn: [
-            //                 '실버',
-            //                 '다드루와',
-            //                 '다드루와',
-            //                 'column4',
-            //                 'column5',
-            //             ],
-            //         },
-            //     ],
-            // });
-            // RaffleListArray.push({
-            //     raffleName: '참가자 없음',
-            //     raffleColumnList: ['티어', '디스코드', '롤아이디'],
-            //     status: RAFFLE_STATE.ING,
-            //     participantsInfo: [],
-            // });
+            RaffleListArray.push({
+                raffleName: '테스트1',
+                raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
+                status: RAFFLE_STATE.ING,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            '브론즈',
+                            'ghtyru231',
+                            '올라프장인',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru06',
+                        nickName: 'ghtyru06',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru07',
+                        nickName: 'ghtyru07',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru08',
+                        nickName: 'ghtyru08',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru09',
+                        nickName: 'ghtyru09',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru10',
+                        nickName: 'ghtyru10',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+                winnersInfo: [],
+            });
+            RaffleListArray.push({
+                raffleName: '테스트2',
+                raffleColumnList: ['티어', '디스코드', '롤아이디'],
+                status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            'column1',
+                            'column2',
+                            'column3',
+                        ],
+                    },
+                ],
+            });
+            RaffleListArray.push({
+                raffleName: '테스트3',
+                raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
+                status: RAFFLE_STATE.FINISH,
+                participantsInfo: [
+                    {
+                        userId: 'ghtyru01',
+                        nickName: 'ghtyru01',
+                        grade: USER_GRADE.VIP,
+                        customColumn: [
+                            '브론즈',
+                            'ghtyru231',
+                            '올라프장인',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru02',
+                        nickName: 'ghtyru02',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru03',
+                        nickName: 'ghtyru03',
+                        grade: USER_GRADE.NORMAL,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru06',
+                        nickName: 'ghtyru06',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '다이아몬드',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru07',
+                        nickName: 'ghtyru07',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru08',
+                        nickName: 'ghtyru08',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru09',
+                        nickName: 'ghtyru09',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru10',
+                        nickName: 'ghtyru10',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+                winnersInfo: [
+                    {
+                        userId: 'ghtyru04',
+                        nickName: 'ghtyru04',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                    {
+                        userId: 'ghtyru05',
+                        nickName: 'ghtyru05',
+                        grade: USER_GRADE.FAN,
+                        customColumn: [
+                            '실버',
+                            '다드루와',
+                            '다드루와',
+                            'column4',
+                            'column5',
+                        ],
+                    },
+                ],
+            });
+            RaffleListArray.push({
+                raffleName: '참가자 없음',
+                raffleColumnList: ['티어', '디스코드', '롤아이디'],
+                status: RAFFLE_STATE.ING,
+                participantsInfo: [],
+            });
             render.raffleList();
             event.init();
             messageListener.init();

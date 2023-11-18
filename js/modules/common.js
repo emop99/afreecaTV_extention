@@ -1,4 +1,6 @@
 const oCommon = (() => {
+    'use strict';
+
     return {
         /**
          * 버블이나 캡쳐을 이용한 이벤트 리스터를 등록
