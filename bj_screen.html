@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AfreecaTV 랜덤뽑기 PC팝업 BJ</title>
     <script defer src="https://static.afreecatv.com/asset/app/extension-helper/afreecatv-extension-sdk.js"></script>
     <link rel="stylesheet" href="./css/style.css">
@@ -126,15 +125,6 @@
 <script type="module" src="./js/main_bj.js"></script>
 
 <script>
-    function copy(text){
-        navigator.clipboard.writeText(text)
-            .then(() => {
-                alert("복사 완료!")
-            })
-            .catch(err => {
-                console.error('Unable to copy data:', err);
-            });
-    }
     $('.settings-btn').mouseenter(function () {
         $('.system-setting').stop().fadeIn()
     })
