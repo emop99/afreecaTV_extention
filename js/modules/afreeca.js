@@ -8,6 +8,7 @@ const CUSTOM_ACTION_CODE = {
     LOADING_USER_RAFFLE_INFO: 'LOADING_USER_RAFFLE_INFO', // 유저 화면 로딩 시 추첨 정보 가져오기
     SEND_WINNER_INFO: 'SEND_WINNER_INFO', // 추첨 당첨자 정보 전송
     CHANGE_RAFFLE_HEAD_COUNT: 'CHANGE_RAFFLE_HEAD_COUNT', // 추첨 신청 인원 변경
+    RAFFLE_ALL_RESET: 'RAFFLE_ALL_RESET', // 추첨 정보 전체 초기화
 };
 const ACTION_CODE = {
     JOIN: 'JOIN',

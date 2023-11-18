@@ -545,6 +545,12 @@ const oMain = (() => {
                     headCount,
                 }));
             },
+            /**
+             * 추첨 전체 초기화
+             */
+            raffleAllReset: () => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.RAFFLE_ALL_RESET, null);
+            },
         };
     })();
 

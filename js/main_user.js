@@ -267,6 +267,7 @@ const oMain = (() => {
                     }
 
                     RaffleListArray[raffleNo].isParticipants = true;
+                    RaffleListArray[raffleNo].status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
                     api.addRaffleParticipant(participantsInfo);
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = 'none';
                     event.screenReset();
@@ -307,11 +308,38 @@ const oMain = (() => {
                     if (raffleInfo.hasOwnProperty('isParticipants')) {
                         RaffleListArray[raffleNo].isParticipants = raffleInfo.isParticipants;
                     }
+                    if (raffleInfo.hasOwnProperty('winnersInfo')) {
+                        RaffleListArray[raffleNo].winnersInfo = raffleInfo.winnersInfo;
+                    }
+                    if (raffleInfo.hasOwnProperty('isParticipants')) {
+                        RaffleListArray[raffleNo].isParticipants = raffleInfo.isParticipants;
+                    }
+                    if (raffleInfo.hasOwnProperty('participantsInfo')) {
+                        RaffleListArray[raffleNo].participantsInfo = raffleInfo.participantsInfo;
+                    }
+                } else {
+                    RaffleListArray[raffleNo] = raffleInfo;
+
+                    if (!RaffleListArray[raffleNo].hasOwnProperty('raffleName')) {
+                        RaffleListArray[raffleNo].raffleName = '';
+                    }
+                    if (!RaffleListArray[raffleNo].hasOwnProperty('raffleColumnList')) {
+                        RaffleListArray[raffleNo].raffleColumnList = [];
+                    }
+                    if (!RaffleListArray[raffleNo].hasOwnProperty('headCount')) {
+                        RaffleListArray[raffleNo].headCount = 0;
+                    }
+                    if (!RaffleListArray[raffleNo].hasOwnProperty('status')) {
+                        RaffleListArray[raffleNo].status = RAFFLE_STATE.ING;
+                    }
                     if (!RaffleListArray[raffleNo].hasOwnProperty('winnersInfo')) {
                         RaffleListArray[raffleNo].winnersInfo = [];
                     }
                     if (!RaffleListArray[raffleNo].hasOwnProperty('isParticipants')) {
-                        RaffleListArray[raffleNo].isParticipants = false;
+                        RaffleListArray[raffleNo].isParticipants = 0;
+                    }
+                    if (!RaffleListArray[raffleNo].hasOwnProperty('isWinner')) {
+                        RaffleListArray[raffleNo].isWinner = 0;
                     }
                     if (!RaffleListArray[raffleNo].hasOwnProperty('participantsInfo')) {
                         RaffleListArray[raffleNo].participantsInfo = [];
@@ -400,6 +428,9 @@ const oMain = (() => {
                         // 추첨 신청 인원 변경 메시지 수신
                         const messageObj = JSON.parse(message);
                         event.setRaffleInfo(messageObj);
+                    } else if (action === CUSTOM_ACTION_CODE.RAFFLE_ALL_RESET) {
+                        // 추첨 정보 전체 초기화 메시지 수신
+                        RaffleListArray.length = 0;
                     }
                 });
 
