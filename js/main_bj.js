@@ -606,6 +606,12 @@ const oMain = (() => {
                 });
 
                 oAfreeca.api.chatListen((action, messageObj) => {
+                    if (oConfig.isDev()) {
+                        console.log(`oAfreeca.api.chatListen`);
+                        console.log(`action : ${action}`);
+                        console.log(`messageObj : ${messageObj}`);
+                        console.log(`====================================================`);
+                    }
                     switch (action) {
                         case ACTION_CODE.MESSAGE:
                             if (messageObj.message === WEPL_RUNNING_MESSAGE) {

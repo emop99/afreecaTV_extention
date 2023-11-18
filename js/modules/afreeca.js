@@ -115,7 +115,7 @@ const oAfreeca = (() => {
                     console.log(`message : ${message}`);
                     console.log(`=============================================`);
                 }
-                extensionSdk.chat.send('MESSAGE', message);
+                extensionSDK.chat.send('MESSAGE', message);
             },
         },
     };
