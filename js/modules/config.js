@@ -49,7 +49,7 @@ const oConfig = (() => {
 
     return {
         init: () => {
-            isDev = (window.location.hostname === 'localhost');
+            isDev = (window.location.hostname === 'localhost' || window.location.hostname === 'extensiont.afreecatv.com');
         },
         isDev: () => {
             return isDev;

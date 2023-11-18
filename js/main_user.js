@@ -124,6 +124,13 @@ const oMain = (() => {
 
                 document.querySelector(selectorMap.raffleListTbody).innerHTML = template.raffleList();
             },
+            raffleListRefresh: () => {
+                if (RaffleListArray.length === 0) {
+                    document.querySelector(selectorMap.raffleListTbody).innerHTML = template.emptyRaffleList();
+                    return;
+                }
+                document.querySelector(selectorMap.raffleListTbody).innerHTML = template.raffleList();
+            },
             raffleDetailViewShowProc: (raffleNo) => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
@@ -186,6 +193,12 @@ const oMain = (() => {
 
                 // 최초 로딩 시 추첨 리스트 요청 처리
                 event.screenReset();
+
+                // 1초마다 추첨 리스트 갱신
+                setInterval(() => {
+                    render.raffleListRefresh();
+                }, 1000);
+
 
                 // 현황 체크박스 상태 변경 불가 처리
                 oCommon.addDelegateTarget(document, 'click', selectorMap.raffleStateCheckbox, (e) => {
@@ -345,6 +358,13 @@ const oMain = (() => {
         return {
             init: () => {
                 oAfreeca.api.broadcastListener((action, message, fromId) => {
+                    if (oConfig.isDev()) {
+                        console.log(`oAfreeca.api.broadcastListener`);
+                        console.log(`action : ${action}`);
+                        console.log(`message : ${message}`);
+                        console.log(`fromId : ${fromId}`);
+                        console.log(`====================================================`);
+                    }
                     if (action === CUSTOM_ACTION_CODE.CREATE_RAFFLE) {
                         // 추첨 생성 메시지 수신
                         const messageObj = JSON.parse(message);
@@ -384,6 +404,12 @@ const oMain = (() => {
                 });
 
                 oAfreeca.api.chatListen((action, message) => {
+                    if (oConfig.isDev()) {
+                        console.log(`oAfreeca.api.chatListen`);
+                        console.log(`action : ${action}`);
+                        console.log(`message : ${message}`);
+                        console.log(`====================================================`);
+                    }
                     if (action === ACTION_CODE.IN) {
                         userInfo = message;
                     }

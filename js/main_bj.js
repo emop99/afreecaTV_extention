@@ -51,8 +51,6 @@ const oMain = (() => {
             raffleList: () => {
                 return RaffleListArray.map((row, index) => {
                     const raffleNo = index;
-                    // <a href="javascript:;" className="list-close-btn raffle-finishing-btn" data-raffle-no="0"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="0"></a>
-                    // <a href="#none" class="list-close-btn"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box"></a>
                     return `<tr>
                                 <td>${raffleNo + 1}</td>
                                 <td>${row.raffleName}</td>
@@ -554,6 +552,13 @@ const oMain = (() => {
         return {
             init: () => {
                 oAfreeca.api.broadcastListener((action, message, fromId) => {
+                    if (oConfig.isDev()) {
+                        console.log(`oAfreeca.api.broadcastListener`);
+                        console.log(`action : ${action}`);
+                        console.log(`message : ${message}`);
+                        console.log(`fromId : ${fromId}`);
+                        console.log(`====================================================`);
+                    }
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         // 추첨 참가자 추가
                         const messageJson = JSON.parse(message);

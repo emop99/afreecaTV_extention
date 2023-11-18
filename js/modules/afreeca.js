@@ -1,3 +1,5 @@
+import {oConfig} from './config.js';
+
 const CUSTOM_ACTION_CODE = {
     CREATE_RAFFLE: 'CREATE_RAFFLE', // 신규 추첨 생성
     ADD_RAFFLE_PARTICIPANT: 'ADD_RAFFLE_PARTICIPANT', // 추첨 참여자 추가
@@ -68,6 +70,12 @@ const oAfreeca = (() => {
              * @param message String, Object 최대 500Byte
              */
             broadcastSend: (action, message) => {
+                if (oConfig.isDev()) {
+                    console.log('broadcastSend');
+                    console.log(`action : ${action}`);
+                    console.log(`message : ${message}`);
+                    console.log(`=============================================`);
+                }
                 extensionSDK.broadcast.send(action, message);
             },
             /**
@@ -77,6 +85,13 @@ const oAfreeca = (() => {
              * @param message String, Object 최대 500Byte
              */
             broadcastWhisper: (userId, action, message) => {
+                if (oConfig.isDev()) {
+                    console.log('broadcastWhisper');
+                    console.log(`userId : ${userId}`);
+                    console.log(`action : ${action}`);
+                    console.log(`message : ${message}`);
+                    console.log(`=============================================`);
+                }
                 extensionSDK.broadcast.whisper(userId, action, message);
             },
             /**
