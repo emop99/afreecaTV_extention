@@ -2,7 +2,7 @@ import {oConfig, USER_GRADE, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GR
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
-
+//sjy
 const oMain = (() => {
     'use strict';
 
