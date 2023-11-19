@@ -51,18 +51,19 @@ const oMain = (() => {
             raffleList: () => {
                 return RaffleListArray.map((row, index) => {
                     const raffleNo = index;
+                    const {raffleName, status, headCount} = row;
                     return `<tr>
                                 <td>${raffleNo + 1}</td>
-                                <td>${row.raffleName}</td>
-                                <td>${row.participantsInfo.length.toLocaleString('ko')}</td>
+                                <td>${raffleName}</td>
+                                <td>${headCount.toLocaleString('ko')}</td>
                                 <td>
-                                    ${row.status === RAFFLE_STATE.ING ? `<a href="javascript:;" class="list-close-btn raffle-finishing-btn" data-raffle-no="${raffleNo}"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="${raffleNo}"></a>` :
-                        row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED || row.status === RAFFLE_STATE.FINISH ? template.finishingText() : ''}
+                                    ${status === RAFFLE_STATE.ING ? `<a href="javascript:;" class="list-close-btn raffle-finishing-btn" data-raffle-no="${raffleNo}"><img src="./images/icon-minus-box-fill.svg" alt="icon-minus-box" data-raffle-no="${raffleNo}"></a>` :
+                        status === RAFFLE_STATE.DEAD_LINE_COMPLETED || status === RAFFLE_STATE.FINISH ? template.finishingText() : ''}
                                 </td>
                                 <td>
-                                    ${row.status === RAFFLE_STATE.ING || row.status === RAFFLE_STATE.DEAD_LINE_COMPLETED ?
+                                    ${status === RAFFLE_STATE.ING || status === RAFFLE_STATE.DEAD_LINE_COMPLETED ?
                         `<a href="javascript:;" class="badge-primary-1 raffle-detail-view-btn" data-raffle-no="${raffleNo}">상세보기</a>` :
-                        row.status === RAFFLE_STATE.FINISH ? `<a href="javascript:;" class="badge-primary-2 raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</a>` :
+                        status === RAFFLE_STATE.FINISH ? `<a href="javascript:;" class="badge-primary-2 raffle-detail-view-btn" data-raffle-no="${raffleNo}">추첨완료</a>` :
                             ''}
                                 </td>
                             </tr>`;
@@ -197,7 +198,7 @@ const oMain = (() => {
         return {
             init: () => {
                 api.raffleAllReset();
-                
+
                 // 복사하기 버튼 클릭 이벤트
                 oCommon.addDelegateTarget(document, 'click', selectorMap.copyButton, (event) => {
                     const text = event.target.parentNode.textContent;
@@ -249,6 +250,13 @@ const oMain = (() => {
                         status: RAFFLE_STATE.ING,
                     });
                     RaffleListArray[RaffleListArray.length - 1].raffleNo = RaffleListArray.length - 1;
+
+                    if (oConfig.isDev()) {
+                        console.log('New RaffleListArray');
+                        console.log(RaffleListArray);
+                        console.table(RaffleListArray[RaffleListArray.length - 1]);
+                        console.log(`=============================================`);
+                    }
 
                     render.raffleList();
 
@@ -364,7 +372,7 @@ const oMain = (() => {
                         return;
                     }
 
-                    oModal.confirmModal("재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.", '재추첨', '취소', (e) => {
+                    oModal.confirmModal("재추첨을 하시겠습니까?<br>기존 추첨 정보는 삭제됩니다.", '재추첨', '취소', (e) => {
                         selectRaffleInfo.winnersInfo = [];
                         selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
@@ -483,6 +491,13 @@ const oMain = (() => {
                 }
 
                 RaffleListArray[raffleNo].headCount = RaffleListArray[raffleNo].participantsInfo.length;
+
+                if (oConfig.isDev()) {
+                    console.log(`Add Raffle Participant`);
+                    console.log(RaffleListArray);
+                    console.table(RaffleListArray[raffleNo]);
+                    console.log(`=============================================`);
+                }
             },
         };
     })();

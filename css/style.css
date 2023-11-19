@@ -18,7 +18,7 @@
   display: flex;
 } */
 .common-container {
-    border: 1px solid #000;
+    /*border: 1px solid #000;*/
 }
 
 /* ####################### Default CSS ####################### */
@@ -636,6 +636,7 @@ input::-webkit-search-results-decoration {
 }
 
 .lottery-result-user .lottery-result {
+    width: 100%;
     margin-bottom: 5px;
     display: flex;
     justify-content: center;
@@ -657,7 +658,7 @@ input::-webkit-search-results-decoration {
 }
 
 .lottery-result-user .common-table th:nth-child(1) {
-    width: 154px;
+    width: 90px;
 }
 
 .lottery-result-user .common-table th:nth-child(2) {
@@ -665,7 +666,7 @@ input::-webkit-search-results-decoration {
 }
 
 .lottery-result-user .common-table th:nth-child(3) {
-    width: 154px;
+    width: 90px;
 }
 
 

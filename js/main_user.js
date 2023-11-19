@@ -200,7 +200,7 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', selectorMap.raffleParticipationSuccessBtn, (e) => {
                     const {raffleNo} = document.querySelector(selectorMap.raffleParticipationSuccessBtn).dataset;
 
-                    if (!raffleNo) {
+                    if (!raffleNo || !RaffleListArray[raffleNo]) {
                         oModal.errorModalShow('해당 추첨 정보가 없습니다.', () => {
                             event.screenResetAndDataCall();
                         });
@@ -251,8 +251,7 @@ const oMain = (() => {
                         RaffleListArray[raffleNo].participantsInfo.push(participantsInfo);
                     }
 
-                    RaffleListArray[raffleNo].isParticipants = true;
-                    RaffleListArray[raffleNo].status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
+                    RaffleListArray[raffleNo].isParticipants = 1;
                     api.addRaffleParticipant(participantsInfo);
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = 'none';
                     render.raffleList();
