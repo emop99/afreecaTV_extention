@@ -210,8 +210,8 @@ const oMain = (() => {
                         console.log('====================================');
                     }
 
-                    if (authInfo.obscureUserId === null) {
-                        userInfo.isLogin = 0;
+                    if (authInfo.obscureUserId !== null) {
+                        userInfo.isLogin = 1;
                     }
                 });
 
@@ -520,7 +520,7 @@ const oMain = (() => {
                             location.reload();
                         });
                     }
-                }, 1000);
+                }, 3000);
             },
         };
     })();
