@@ -244,7 +244,12 @@ const oMain = (() => {
                     if (!validate) return;
 
                     RaffleListArray.push({
-                        ...RAFFLE_INFO_DEFAULT_DATA_SET,
+                        raffleNo: 0,
+                        participantsInfo: [],
+                        winnersInfo: [],
+                        headCount: 0,
+                        isParticipants: 0,
+                        isWinner: 0,
                         raffleName,
                         raffleColumnList,
                         status: RAFFLE_STATE.ING,
