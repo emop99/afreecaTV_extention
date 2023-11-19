@@ -2,7 +2,7 @@ import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WE
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
-
+//sjy
 const oMain = (() => {
     'use strict';
 
@@ -401,6 +401,72 @@ const oMain = (() => {
                     }, (e) => {
                     });
                 });
+
+                // 추첨 결과 정렬 로직 2023-11-19 sjy
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleDetailInfoThead}`, (e) => {
+                   // console.log(selectorMap.raffleDetailInfoTable)
+                    var table, rows, switching, i, x, y, shouldSwitch;
+                    table = document.getElementById('raffle-detail-info-table');
+                    switching = true;
+                    console.log(e.target.dataset.isAic);
+
+                    if(e.target.dataset.isAic != 'true'){
+                        e.target.dataset.isAic = 'true'
+                    }else{
+                        e.target.dataset.isAic = 'false';
+                    }
+                    
+
+
+                    while (switching) {
+                        switching = false;
+                        rows = table.rows;
+
+                        for (i = 1; i < (rows.length - 1); i++) {
+                            shouldSwitch = false;
+                            x = rows[i].getElementsByTagName("td")[Array.from(e.target.parentNode.children).indexOf(e.target)];
+                            y = rows[i + 1].getElementsByTagName("td")[Array.from(e.target.parentNode.children).indexOf(e.target)];
+                            
+
+                            if(e.target.dataset.isAic != 'true'){
+                                console.log('index true' + e.target.dataset.isAic);
+                                
+                                if (isNaN(x.innerHTML)) {
+                                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                } else {
+                                    if (Number(x.innerHTML) > Number(y.innerHTML)) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                }
+                            }else{
+                                
+                                if (isNaN(x.innerHTML)) {
+                                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                                        shouldSwitch = true;
+                                        break;
+                                    }
+                                } else {
+                                    if (Number(x.innerHTML) < Number(y.innerHTML)) {
+                                        shouldSwitch = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+
+                                                
+                        }
+                        if (shouldSwitch) {
+                            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                            switching = true;
+                        }
+                    }
+                
+                });
             },
             raffleParticipantsCheckProc: (isCheck) => {
                 document.querySelectorAll(selectorMap.raffleParticipantsCheck).forEach((element) => {
@@ -699,7 +765,7 @@ const oMain = (() => {
 
     return {
         init: () => {
-            // TODO 초기데이터 테스트 셋팅
+           // TODO 초기데이터 테스트 셋팅
             // RaffleListArray.push({
             //     raffleName: '테스트1',
             //     raffleColumnList: ['티어', '디스코드', '롤아이디', 'test1', 'test2'],
