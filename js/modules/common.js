@@ -10,13 +10,13 @@ const oCommon = (() => {
          * @param {object} handler 함수
          * @param {boolean} [isCapture=false] true: 버블,false: 캡쳐
          */
-        addDelegateTarget: function (
+        addDelegateTarget: (
             target,
             eventName,
             elementSelector,
             handler,
             isCapture = false
-        ) {
+        ) => {
             const currentThis = this;
             target.addEventListener(
                 eventName,
@@ -34,6 +34,22 @@ const oCommon = (() => {
                 },
                 isCapture
             );
+        },
+        /**
+         * 딜레이 지정
+         * @param ms {int}
+         * @returns {Promise<unknown>}
+         */
+        sleep: (ms) => {
+            return new Promise((resolve) => setTimeout(resolve, ms));
+        },
+        /**
+         * ID 에서 (숫자) 제거 처리
+         * @param id {string}
+         * @returns {string}
+         */
+        idEscape: (id) => {
+            return id.replace(/\(\d+\)/g, '');
         },
     };
 })();

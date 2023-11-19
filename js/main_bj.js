@@ -71,7 +71,7 @@ const oMain = (() => {
             columnInputDiv: () => {
                 return `<label for="form-setting" class="add-column-input-div">
                             <button class="remove-form-btn" type="button"><img src="./images/icon-remove.svg" alt="icon-remove"></button>
-                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]">
+                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]" maxlength="25">
                         </label>`;
             },
             finishingText: () => {
@@ -196,7 +196,8 @@ const oMain = (() => {
     const event = (() => {
         return {
             init: () => {
-
+                api.raffleAllReset();
+                
                 // 복사하기 버튼 클릭 이벤트
                 oCommon.addDelegateTarget(document, 'click', selectorMap.copyButton, (event) => {
                     const text = event.target.parentNode.textContent;
@@ -363,7 +364,7 @@ const oMain = (() => {
                         return;
                     }
 
-                    oModal.confirmModal('재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.', '재추첨', '취소', (e) => {
+                    oModal.confirmModal("재추첨을 하시겠습니까?\n기존 추첨 정보는 삭제됩니다.", '재추첨', '취소', (e) => {
                         selectRaffleInfo.winnersInfo = [];
                         selectRaffleInfo.status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
 
@@ -439,13 +440,18 @@ const oMain = (() => {
                 }
                 selectRaffleInfo.winnersInfo = winnersInfo;
                 selectRaffleInfo.status = RAFFLE_STATE.FINISH;
-                render.raffleDetailViewShowProc(raffleNo);
 
-                api.raffleStateChange(raffleNo, selectRaffleInfo.status);
-                api.raffleWinnerInfoChange(raffleNo, winnersInfo);
+                async function apiSend() {
+                    api.raffleWinnerInfoChange(raffleNo, winnersInfo);
+                    await oCommon.sleep(50);
+                    for (const winnersInfoRow of winnersInfo) {
+                        api.raffleWinnerAlimSend(raffleNo, winnersInfoRow);
+                        await oCommon.sleep(50);
+                    }
+                }
 
-                winnersInfo.forEach((winnersInfoRow) => {
-                    api.raffleWinnerAlimSend(raffleNo, winnersInfoRow);
+                apiSend().then(() => {
+                    render.raffleDetailViewShowProc(raffleNo);
                 });
             },
             screenReset: () => {
@@ -502,14 +508,14 @@ const oMain = (() => {
                 }));
             },
             /**
-             * 추첨 재추첨 처리를 위한 추첨 정보 초기화
+             * 추첨 재추첨 처리를 위한 당첨 정보 초기화
              * @param raffleNo {int}
              */
             raffleWinnerReset: (raffleNo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
                     raffleNo,
+                    status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
                     winnersInfo: [],
-                    isParticipants: 0,
                     isWinner: 0,
                 }));
             },
@@ -521,6 +527,7 @@ const oMain = (() => {
             raffleWinnerInfoChange: (raffleNo, winnersInfo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
                     raffleNo,
+                    status: RAFFLE_STATE.FINISH,
                     winnersInfo,
                 }));
             },
@@ -531,7 +538,7 @@ const oMain = (() => {
              */
             raffleWinnerAlimSend: (raffleNo, winnersInfo) => {
                 const {userId} = winnersInfo;
-                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, JSON.stringify({
+                oAfreeca.api.broadcastWhisper(oCommon.idEscape(userId), CUSTOM_ACTION_CODE.SEND_WINNER_ALIM, JSON.stringify({
                     raffleNo
                 }));
             },
@@ -558,8 +565,8 @@ const oMain = (() => {
              */
             userInfoSend: (userInfoObj) => {
                 const {userId, userNickname, userStatus} = userInfoObj;
-                oAfreeca.api.broadcastWhisper(userId, CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
-                    userId,
+                oAfreeca.api.broadcastWhisper(oCommon.idEscape(userId), CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
+                    userId: oCommon.idEscape(userId),
                     userNickname,
                     userStatus,
                 }));

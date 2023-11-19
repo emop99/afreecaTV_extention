@@ -78,7 +78,7 @@ const oMain = (() => {
                 return `<fieldset class="raffle-column-input-fieldset" id="form-setting-${index}">
                             <legend>${column}</legend>
                             <label for="form-setting-${index}">
-                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]">
+                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]" maxlength="25">
                             </label>
                         </fieldset>`;
             },
@@ -120,7 +120,7 @@ const oMain = (() => {
                 const selectRaffleInfo = RaffleListArray[raffleNo];
                 if (!selectRaffleInfo) {
                     oModal.errorModalShow('해당 추첨 정보가 없습니다.', () => {
-                        event.screenReset();
+                        event.screenResetAndDataCall();
                     });
                     return;
                 }
@@ -145,7 +145,7 @@ const oMain = (() => {
                         event.loadInputData(selectRaffleInfo);
                     } else {
                         oModal.errorModalShow('신청 마감된 추첨입니다.', () => {
-                            event.screenReset();
+                            event.screenResetAndDataCall();
                         });
                     }
                 } else if (selectRaffleInfo.status === RAFFLE_STATE.FINISH) {
@@ -173,11 +173,11 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', 'a.close', (e) => {
                     e.target.closest('.top-container').style.display = 'none';
                     document.querySelector(selectorMap.mainDiv).style.display = '';
-                    event.screenReset();
+                    event.screenResetAndDataCall();
                 });
 
                 // 최초 로딩 시 추첨 리스트 요청 처리
-                event.screenReset();
+                event.screenResetAndDataCall();
 
                 // 1초마다 추첨 리스트 갱신
                 setInterval(() => {
@@ -202,13 +202,13 @@ const oMain = (() => {
 
                     if (!raffleNo) {
                         oModal.errorModalShow('해당 추첨 정보가 없습니다.', () => {
-                            event.screenReset();
+                            event.screenResetAndDataCall();
                         });
                         return;
                     }
                     if (RaffleListArray[raffleNo].status !== RAFFLE_STATE.ING) {
                         oModal.errorModalShow('신청 마감된 추첨입니다.', () => {
-                            event.screenReset();
+                            event.screenResetAndDataCall();
                         });
                         return;
                     }
@@ -255,7 +255,7 @@ const oMain = (() => {
                     RaffleListArray[raffleNo].status = RAFFLE_STATE.DEAD_LINE_COMPLETED;
                     api.addRaffleParticipant(participantsInfo);
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = 'none';
-                    event.screenReset();
+                    render.raffleList();
                 });
             },
             setCreateRaffleInfo: (raffleInfo) => {
@@ -285,7 +285,9 @@ const oMain = (() => {
                         RaffleListArray[raffleNo].headCount = raffleInfo.headCount;
                     }
                     if (raffleInfo.hasOwnProperty('status')) {
-                        RaffleListArray[raffleNo].status = raffleInfo.status;
+                        if (raffleInfo.status !== RAFFLE_STATE.ING) {
+                            RaffleListArray[raffleNo].status = raffleInfo.status;
+                        }
                     }
                     if (raffleInfo.hasOwnProperty('winnerInfo')) {
                         RaffleListArray[raffleNo].winnersInfo = raffleInfo.winnersInfo;
@@ -293,11 +295,8 @@ const oMain = (() => {
                     if (raffleInfo.hasOwnProperty('isParticipants')) {
                         RaffleListArray[raffleNo].isParticipants = raffleInfo.isParticipants;
                     }
-                    if (raffleInfo.hasOwnProperty('winnersInfo')) {
-                        RaffleListArray[raffleNo].winnersInfo = raffleInfo.winnersInfo;
-                    }
-                    if (raffleInfo.hasOwnProperty('isParticipants')) {
-                        RaffleListArray[raffleNo].isParticipants = raffleInfo.isParticipants;
+                    if (!raffleInfo.hasOwnProperty('isWinner')) {
+                        RaffleListArray[raffleNo].isWinner = raffleInfo.isWinner;
                     }
                     if (raffleInfo.hasOwnProperty('participantsInfo')) {
                         RaffleListArray[raffleNo].participantsInfo = raffleInfo.participantsInfo;
@@ -332,10 +331,10 @@ const oMain = (() => {
                 }
 
                 if (document.querySelector(selectorMap.mainDiv).style.display === '') {
-                    render.raffleList();
+                    render.raffleListRefresh();
                 }
             },
-            screenReset: () => {
+            screenResetAndDataCall: () => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
                 document.querySelectorAll('.top-container').forEach((element) => {
                     element.style.display = 'none';
@@ -395,14 +394,19 @@ const oMain = (() => {
                         messageArray.forEach((raffleInfo) => {
                             event.setRaffleInfo(raffleInfo);
                         });
-                        render.raffleList();
+                        render.raffleListRefresh();
                     } else if (action === CUSTOM_ACTION_CODE.SEND_WINNER_ALIM) {
                         // 추첨 당첨자 알림 메시지 수신
                         const messageObj = JSON.parse(message);
                         const {raffleNo} = messageObj;
 
                         if (RaffleListArray.hasOwnProperty(raffleNo)) {
-                            event.screenReset();
+                            RaffleListArray[raffleNo].isWinner = 1;
+                            RaffleListArray[raffleNo].status = RAFFLE_STATE.FINISH;
+                            document.querySelectorAll('.top-container').forEach((element) => {
+                                element.style.display = 'none';
+                            });
+                            render.raffleListRefresh();
                             render.raffleDetailViewShowProc(raffleNo);
                         }
                     } else if (action === CUSTOM_ACTION_CODE.SEND_WINNER_INFO) {
