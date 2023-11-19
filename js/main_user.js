@@ -209,7 +209,7 @@ const oMain = (() => {
                 // 최초 로딩 시 추첨 리스트 요청 처리
                 event.screenResetAndDataCall();
 
-                // 1초마다 추첨 리스트 갱신
+                // 0.5초마다 추첨 리스트 갱신
                 setInterval(() => {
                     if (loginCheckTryCnt >= 3 && !userInfo.userId) {
                         oModal.errorModalShow('로그인 정보를 불러오지 못했습니다.', () => {
@@ -236,10 +236,10 @@ const oMain = (() => {
                 });
 
                 // 입력 최대 글자수 제한
-                oCommon.addDelegateTarget(document, 'keyup', selectorMap.raffleColumnInputFieldset, (e) => {
+                oCommon.addDelegateTarget(document, 'keyup', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
                     e.target.value = e.target.value.slice(0, 20);
                 });
-                oCommon.addDelegateTarget(document, 'input', selectorMap.raffleColumnInputFieldset, (e) => {
+                oCommon.addDelegateTarget(document, 'input', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
                     e.target.value = e.target.value.slice(0, 20);
                 });
 

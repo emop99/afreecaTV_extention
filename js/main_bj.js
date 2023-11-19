@@ -292,10 +292,12 @@ const oMain = (() => {
 
                 // 입력 최대 글자수 제한
                 oCommon.addDelegateTarget(document, 'keyup', `${selectorMap.raffleAddDiv} input`, (e) => {
-                    e.target.value = e.target.value.slice(0, 20);
+                    const maxLength = e.target.dataset.maxlength || 20;
+                    e.target.value = e.target.value.slice(0, maxLength);
                 });
                 oCommon.addDelegateTarget(document, 'input', `${selectorMap.raffleAddDiv} input`, (e) => {
-                    e.target.value = e.target.value.slice(0, 20);
+                    const maxLength = e.target.dataset.maxlength || 20;
+                    e.target.value = e.target.value.slice(0, maxLength);
                 });
 
                 // form submit 방지
