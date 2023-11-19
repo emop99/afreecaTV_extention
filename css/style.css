@@ -313,7 +313,7 @@ input::-webkit-search-results-decoration {
 
 .apply-setting-bj .form-apply-setting {
     /* border: 1px solid #000; */
-    overflow: scroll;
+    overflow: auto;
     width: 100%;
     height: 460px;
     padding: 0px 30px 0px 30px;
@@ -643,11 +643,13 @@ input::-webkit-search-results-decoration {
     align-items: center;
 }
 
+.lottery-result-user .lottery-result img {
+    width: 100%;
+}
 
 .lottery-result-user .common-table {
     height: 340px;
     /* border: 1px solid #000; */
-    display: flex;
     justify-content: center;
     align-items: center;
 }

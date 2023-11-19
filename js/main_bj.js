@@ -1,4 +1,4 @@
-import {oConfig, USER_GRADE, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE, LOADING_USER_DEFAULT_INFO} from './modules/config.js';
+import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -72,7 +72,7 @@ const oMain = (() => {
             columnInputDiv: () => {
                 return `<label for="form-setting" class="add-column-input-div">
                             <button class="remove-form-btn" type="button"><img src="./images/icon-remove.svg" alt="icon-remove"></button>
-                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]" maxlength="25">
+                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]" maxlength="20">
                         </label>`;
             },
             finishingText: () => {
@@ -455,7 +455,7 @@ const oMain = (() => {
                 selectRaffleInfo.status = RAFFLE_STATE.FINISH;
 
                 async function apiSend() {
-                    api.raffleWinnerInfoChange(raffleNo, winnersInfo);
+                    api.raffleStateChange(raffleNo, RAFFLE_STATE.FINISH);
                     await oCommon.sleep(50);
                     for (const winnersInfoRow of winnersInfo) {
                         api.raffleWinnerAlimSend(raffleNo, winnersInfoRow);
@@ -514,7 +514,12 @@ const oMain = (() => {
              * @param raffleInfo {RAFFLE_INFO_DEFAULT_DATA_SET}
              */
             raffleCreate: (raffleInfo) => {
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify(raffleInfo));
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CREATE_RAFFLE, JSON.stringify({
+                    raffleNo: raffleInfo.raffleNo,
+                    raffleName: raffleInfo.raffleName,
+                    status: raffleInfo.status,
+                    raffleColumnList: raffleInfo.raffleColumnList,
+                }));
             },
             /**
              * 추첨 상태 변경
@@ -537,18 +542,6 @@ const oMain = (() => {
                     status: RAFFLE_STATE.DEAD_LINE_COMPLETED,
                     winnersInfo: [],
                     isWinner: 0,
-                }));
-            },
-            /**
-             * 추첨 당첨자 정보 변경
-             * @param raffleNo {int}
-             * @param winnersInfo {[RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET]}
-             */
-            raffleWinnerInfoChange: (raffleNo, winnersInfo) => {
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.CHANGE_RAFFLE_INFO, JSON.stringify({
-                    raffleNo,
-                    status: RAFFLE_STATE.FINISH,
-                    winnersInfo,
                 }));
             },
             /**
@@ -621,13 +614,44 @@ const oMain = (() => {
                                 raffleName: raffleInfo.raffleName,
                                 status: raffleInfo.status,
                                 isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId) ? 1 : 0,
-                                raffleColumnList: raffleInfo.raffleColumnList,
                                 headCount: raffleInfo.headCount,
-                                isWinner: raffleInfo.winnersInfo.some((info) => info.userId === fromId) ? 1 : 0,
                             };
                         });
                         if (message.length) {
                             oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify(message));
+                        }
+                    } else if (action === CUSTOM_ACTION_CODE.GET_DETAIL_RAFFLE_INFO) {
+                        // 추첨 데이터 상세 불러오기
+                        const messageJson = JSON.parse(message);
+                        const {raffleNo} = messageJson;
+                        const raffleInfo = RaffleListArray[raffleNo];
+
+                        if (raffleInfo) {
+                            oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify([{
+                                raffleNo: raffleInfo.raffleNo,
+                                status: raffleInfo.status,
+                                raffleColumnList: raffleInfo.raffleColumnList,
+                                isParticipants: raffleInfo.participantsInfo.some((info) => info.userId === fromId) ? 1 : 0,
+                                participantsInfo: raffleInfo.participantsInfo.filter((info) => info.userId === fromId),
+                            }]));
+                        }
+                    } else if (action === CUSTOM_ACTION_CODE.GET_WINNER_INFO) {
+                        // 추첨 당첨자 정보 불러오기
+                        const messageJson = JSON.parse(message);
+                        const {raffleNo} = messageJson;
+                        const raffleInfo = RaffleListArray[raffleNo];
+
+                        if (raffleInfo) {
+                            oAfreeca.api.broadcastWhisper(fromId, CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, JSON.stringify([{
+                                raffleNo: raffleInfo.raffleNo,
+                                winnersInfo: raffleInfo.winnersInfo.map((info) => {
+                                    return {
+                                        userId: info.userId,
+                                        nickName: info.nickName,
+                                        grade: info.grade,
+                                    };
+                                }),
+                            }]));
                         }
                     }
                 });

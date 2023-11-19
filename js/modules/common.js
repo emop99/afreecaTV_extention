@@ -51,6 +51,14 @@ const oCommon = (() => {
         idEscape: (id) => {
             return id.replace(/\(\d+\)/g, '');
         },
+        /**
+         * 문자열의 바이트 크기를 반환
+         * @param str {string}
+         * @returns {number}
+         */
+        getByteSize: (str) => {
+            return (new TextEncoder().encode(str)).length;
+        },
     };
 })();
 

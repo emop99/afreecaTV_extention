@@ -1,4 +1,5 @@
 import {oConfig} from './config.js';
+import oCommon from './common.js';
 
 const CUSTOM_ACTION_CODE = {
     CREATE_RAFFLE: 'CREATE_RAFFLE', // 신규 추첨 생성
@@ -6,10 +7,11 @@ const CUSTOM_ACTION_CODE = {
     CHANGE_RAFFLE_INFO: 'CHANGE_RAFFLE_INFO', // 추첨 정보 변경
     SEND_WINNER_ALIM: 'SEND_WINNER_ALIM', // 추첨 당첨자 알림
     LOADING_USER_RAFFLE_INFO: 'LOADING_USER_RAFFLE_INFO', // 유저 화면 로딩 시 추첨 정보 가져오기
-    SEND_WINNER_INFO: 'SEND_WINNER_INFO', // 추첨 당첨자 정보 전송
+    GET_WINNER_INFO: 'GET_WINNER_INFO', // 추첨 당첨자 정보 요청하기
     CHANGE_RAFFLE_HEAD_COUNT: 'CHANGE_RAFFLE_HEAD_COUNT', // 추첨 신청 인원 변경
     RAFFLE_ALL_RESET: 'RAFFLE_ALL_RESET', // 추첨 정보 전체 초기화
     LOADING_USER_INFO: 'LOADING_USER_INFO', // WEPL 실행 시 유저 정보 가져오기
+    GET_DETAIL_RAFFLE_INFO: 'GET_DETAIL_RAFFLE_INFO', // 추첨 상세 정보 요청
 };
 const ACTION_CODE = {
     JOIN: 'JOIN',
@@ -76,6 +78,7 @@ const oAfreeca = (() => {
                     console.log('broadcastSend');
                     console.log(`action : ${action}`);
                     console.log(`message : ${message}`);
+                    console.log(`message byte : ${oCommon.getByteSize(message)}`);
                     console.log(`=============================================`);
                 }
                 extensionSDK.broadcast.send(action, message);
@@ -92,6 +95,7 @@ const oAfreeca = (() => {
                     console.log(`userId : ${userId}`);
                     console.log(`action : ${action}`);
                     console.log(`message : ${message}`);
+                    console.log(`message byte : ${oCommon.getByteSize(message)}`);
                     console.log(`=============================================`);
                 }
                 extensionSDK.broadcast.whisper(userId, action, message);
@@ -113,6 +117,7 @@ const oAfreeca = (() => {
                 if (oConfig.isDev()) {
                     console.log('chatSend');
                     console.log(`message : ${message}`);
+                    console.log(`message byte : ${oCommon.getByteSize(message)}`);
                     console.log(`=============================================`);
                 }
                 extensionSDK.chat.send('MESSAGE', message);

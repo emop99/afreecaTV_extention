@@ -78,7 +78,7 @@ const oMain = (() => {
                 return `<fieldset class="raffle-column-input-fieldset" id="form-setting-${index}">
                             <legend>${column}</legend>
                             <label for="form-setting-${index}">
-                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]" maxlength="25">
+                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]" maxlength="20">
                             </label>
                         </fieldset>`;
             },
@@ -124,6 +124,23 @@ const oMain = (() => {
                     });
                     return;
                 }
+
+                // BJ 커스텀 입력 항목 존재 여부 확인
+                if (selectRaffleInfo.raffleColumnList.length === 0) {
+                    // 미존재 시 데이터 불러오기
+                    api.getRaffleDetailInfo(raffleNo);
+                    oCommon.sleep(1000).then(() => {
+                        if (selectRaffleInfo.raffleColumnList.length === 0) {
+                            oModal.errorModalShow('데이터를 불러오지 못했습니다.', () => {
+                                event.screenResetAndDataCall();
+                            });
+                            return;
+                        }
+                        render.raffleDetailViewShowProc(raffleNo);
+                    });
+                    return;
+                }
+
                 const isParticipation = selectRaffleInfo.participantsInfo ? selectRaffleInfo.participantsInfo.some((participant) => {
                     return participant.userId === userInfo.userId;
                 }) : false;
@@ -149,18 +166,32 @@ const oMain = (() => {
                         });
                     }
                 } else if (selectRaffleInfo.status === RAFFLE_STATE.FINISH) {
-                    document.querySelector(selectorMap.raffleDetailInfoDiv).style.display = '';
-                    document.querySelector(selectorMap.mainDiv).style.display = 'none';
-                    document.querySelector(selectorMap.raffleDetailInfoTitleHeaderDiv).innerHTML = `${selectRaffleInfo.raffleName}`;
-                    document.querySelector(selectorMap.raffleDetailInfoTable).style.width = `100%`;
-                    document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = selectRaffleInfo.winnersInfo.map((winner, index) => {
-                        return template.winnerList(index + 1, winner.nickName, winner.grade);
-                    }).join('');
-                    if (selectRaffleInfo.hasOwnProperty('isWinner') && selectRaffleInfo.isWinner) {
-                        document.querySelector(selectorMap.raffleFinishResultDiv).innerHTML = template.winnerImageHtml();
-                    } else {
-                        document.querySelector(selectorMap.raffleFinishResultDiv).innerHTML = template.loserImageHtml();
-                    }
+                    // 당첨자 정보 불러오기
+                    api.getWInnersInfo(raffleNo);
+
+                    oCommon.sleep(1000).then(() => {
+                        if (selectRaffleInfo.winnersInfo.length === 0) {
+                            oModal.errorModalShow('데이터를 불러오지 못했습니다.', () => {
+                                event.screenResetAndDataCall();
+                            });
+                            return;
+                        }
+
+                        selectRaffleInfo.isWinner = selectRaffleInfo.winnersInfo.some((info) => info.userId === userInfo.userId) ? 1 : 0;
+
+                        document.querySelector(selectorMap.raffleDetailInfoDiv).style.display = '';
+                        document.querySelector(selectorMap.mainDiv).style.display = 'none';
+                        document.querySelector(selectorMap.raffleDetailInfoTitleHeaderDiv).innerHTML = `${selectRaffleInfo.raffleName}`;
+                        document.querySelector(selectorMap.raffleDetailInfoTable).style.width = `100%`;
+                        document.querySelector(selectorMap.raffleDetailInfoTbody).innerHTML = selectRaffleInfo.winnersInfo.map((winner, index) => {
+                            return template.winnerList(index + 1, winner.nickName, winner.grade);
+                        }).join('');
+                        if (selectRaffleInfo.hasOwnProperty('isWinner') && selectRaffleInfo.isWinner) {
+                            document.querySelector(selectorMap.raffleFinishResultDiv).innerHTML = template.winnerImageHtml();
+                        } else {
+                            document.querySelector(selectorMap.raffleFinishResultDiv).innerHTML = template.loserImageHtml();
+                        }
+                    });
                 }
             },
         };
@@ -181,6 +212,9 @@ const oMain = (() => {
 
                 // 1초마다 추첨 리스트 갱신
                 setInterval(() => {
+                    if (RaffleListArray.length === 0) {
+                        oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
+                    }
                     render.raffleListRefresh();
                 }, 1000);
 
@@ -263,6 +297,11 @@ const oMain = (() => {
                 }
                 const {raffleNo} = raffleInfo;
                 RaffleListArray[raffleNo] = raffleInfo;
+                RaffleListArray[raffleNo].participantsInfo = [];
+                RaffleListArray[raffleNo].winnersInfo = [];
+                RaffleListArray[raffleNo].headCount = 0;
+                RaffleListArray[raffleNo].isParticipants = 0;
+                RaffleListArray[raffleNo].isWinner = 0;
                 if (document.querySelector(selectorMap.mainDiv).style.display === '') {
                     render.raffleList();
                 }
@@ -288,7 +327,7 @@ const oMain = (() => {
                             RaffleListArray[raffleNo].status = raffleInfo.status;
                         }
                     }
-                    if (raffleInfo.hasOwnProperty('winnerInfo')) {
+                    if (raffleInfo.hasOwnProperty('winnersInfo')) {
                         RaffleListArray[raffleNo].winnersInfo = raffleInfo.winnersInfo;
                     }
                     if (raffleInfo.hasOwnProperty('isParticipants')) {
@@ -362,6 +401,20 @@ const oMain = (() => {
             addRaffleParticipant: (participantsInfo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT, JSON.stringify(participantsInfo));
             },
+            /**
+             * 추첨 상세 정보 요청하기
+             * @param raffleNo {int}
+             */
+            getRaffleDetailInfo: (raffleNo) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_DETAIL_RAFFLE_INFO, JSON.stringify({raffleNo}));
+            },
+            /**
+             * 추첨 당첨자 정보 요청하기
+             * @param raffleNo {int}
+             */
+            getWInnersInfo: (raffleNo) => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_WINNER_INFO, JSON.stringify({raffleNo}));
+            },
         };
     })();
 
@@ -408,10 +461,6 @@ const oMain = (() => {
                             render.raffleListRefresh();
                             render.raffleDetailViewShowProc(raffleNo);
                         }
-                    } else if (action === CUSTOM_ACTION_CODE.SEND_WINNER_INFO) {
-                        // 추첨 당첨자 정보 전송 메시지 수신
-                        const messageObj = JSON.parse(message);
-                        event.setRaffleInfo(messageObj);
                     } else if (action === CUSTOM_ACTION_CODE.CHANGE_RAFFLE_HEAD_COUNT) {
                         // 추첨 신청 인원 변경 메시지 수신
                         const messageObj = JSON.parse(message);
@@ -419,6 +468,7 @@ const oMain = (() => {
                     } else if (action === CUSTOM_ACTION_CODE.RAFFLE_ALL_RESET) {
                         // 추첨 정보 전체 초기화 메시지 수신
                         RaffleListArray.length = 0;
+                        event.screenResetAndDataCall();
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_INFO) {
                         userInfo = JSON.parse(message);
                     }
