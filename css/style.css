@@ -319,12 +319,12 @@ input::-webkit-search-results-decoration {
     padding: 0px 30px 0px 30px;
 }
 
-.apply-setting-bj .form-apply-setting #form-setting button,
-.apply-setting-bj .form-apply-setting #form-setting input {
+.apply-setting-bj .form-apply-setting form button,
+.apply-setting-bj .form-apply-setting form input {
     margin-bottom: -15px;
 }
 
-.apply-setting-bj .form-apply-setting label input,
+.apply-setting-bj .form-apply-setting form fieldset:first-child label input,
 .form-text-style {
     border: 1px solid #bbb;
     width: 100%;
@@ -337,23 +337,23 @@ input::-webkit-search-results-decoration {
     position: relative;
 }
 
-.apply-setting-bj .form-apply-setting label input:focus {
+.apply-setting-bj .form-apply-setting form label input:focus {
     border-color: 1px solid #5D5FEF;
 }
 
-.apply-setting-bj .form-apply-setting #form-name legend {
+.apply-setting-bj .form-apply-setting form fieldset:first-child legend {
     font-family: 'Pretendard-SemiBold';
     font-size: 16px;
     padding-bottom: 6px;
 }
 
-.apply-setting-bj .form-apply-setting #form-name hr {
+.apply-setting-bj .form-apply-setting form fieldset:first-child hr {
     border: none;
     border-bottom: 1px solid #bbb;
     margin: 20px 0px 20px 0px;
 }
 
-.apply-setting-bj .form-apply-setting #form-setting .add-form-btn {
+.apply-setting-bj .form-apply-setting form fieldset:last-child .add-form-btn {
     border: 1px solid #5D5FEF;
     color: #5D5FEF;
     background-color: #D4D4FC;
@@ -367,13 +367,13 @@ input::-webkit-search-results-decoration {
     align-items: center;
 }
 
-.apply-setting-bj .form-apply-setting #form-setting .add-form-btn img {
+.apply-setting-bj .form-apply-setting form fieldset:last-child .add-form-btn img {
     filter: invert(32%) sepia(54%) saturate(3609%) hue-rotate(230deg) brightness(101%) contrast(87%);
     margin-right: 10px;
     /* border: 1px solid #000; */
 }
 
-.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn {
+.apply-setting-bj .form-apply-setting form fieldset:last-child .remove-form-btn {
     background-color: none;
     position: relative;
     width: 1px;
@@ -382,7 +382,7 @@ input::-webkit-search-results-decoration {
     left: 11px;
 }
 
-.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn img {
+.apply-setting-bj .form-apply-setting form fieldset:last-child .remove-form-btn img {
     filter: invert(32%) sepia(54%) saturate(3609%) hue-rotate(230deg) brightness(101%) contrast(87%);
     margin-right: 10px;
     /* border: 1px solid #000; */
@@ -391,7 +391,7 @@ input::-webkit-search-results-decoration {
     cursor: pointer;
 }
 
-.apply-setting-bj .form-apply-setting #form-setting .remove-form-btn + input {
+.apply-setting-bj .form-apply-setting form fieldset:last-child .remove-form-btn + input {
     padding-left: 46px;
 }
 
@@ -541,8 +541,10 @@ input::-webkit-search-results-decoration {
 /* ####################### lottery-list-user ####################### */
 /* table */
 .lottery-list-user .common-table {
-    /* border: 1px solid #000; */
     height: 545px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .lottery-list-user .common-table td:nth-child(1),
@@ -584,13 +586,14 @@ input::-webkit-search-results-decoration {
     width: 114px;
 }
 
+
 /* ####################### application-user ####################### */
 .application-user .form-apply-setting {
-    /* border: 1px solid #000; */
     /* overflow: scroll; */
     width: 100%;
     height: 460px;
     padding: 0px 30px 0px 30px;
+
 }
 
 .application-user .form-apply-setting label input,
@@ -610,13 +613,13 @@ input::-webkit-search-results-decoration {
     border-color: 1px solid #5D5FEF;
 }
 
-.application-user .form-apply-setting #form-setting legend {
+.application-user .form-apply-setting form fieldset legend {
     font-family: 'Pretendard-SemiBold';
     font-size: 16px;
     padding-bottom: 6px;
 }
 
-.application-user .form-apply-setting #form-setting input {
+.application-user .form-apply-setting form fieldset input {
     margin-bottom: 20px;
 }
 
@@ -634,11 +637,18 @@ input::-webkit-search-results-decoration {
 
 .lottery-result-user .lottery-result {
     margin-bottom: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 
 .lottery-result-user .common-table {
     height: 340px;
     /* border: 1px solid #000; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .lottery-result-user .common-table td:nth-child(1),
@@ -667,7 +677,7 @@ input::-webkit-search-results-decoration {
     background-color: #fff;
     position: fixed;
     top: 64px;
-    left: 360px;
+    right: 30px;
     overflow: hidden;
 }
 
@@ -696,7 +706,7 @@ input::-webkit-search-results-decoration {
     box-shadow: 0 0 4px #aaa;
     position: fixed;
     top: 60px;
-    left: 432px;
+    right: 46px;
     cursor: unset;
     z-index: -10;
 }
@@ -706,7 +716,7 @@ input::-webkit-search-results-decoration {
 .error-modal,
 .confirm-modal {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: #000000CC;
     position: fixed;
     top: 0;
@@ -714,6 +724,7 @@ input::-webkit-search-results-decoration {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .error-modal .modal-container,
