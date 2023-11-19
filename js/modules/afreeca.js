@@ -62,6 +62,13 @@ const oAfreeca = (() => {
          */
         api: {
             /**
+             * 초기화 처리를 담당하는 핸들러 함수입니다. 주어진 인증 정보와 방송 정보, 플레이어 정보를 사용하여 초기화 작업을 수행합니다.
+             * @param callBack
+             */
+            initialization: (callBack) => {
+                extensionSDK.handleInitialization(callBack);
+            },
+            /**
              * 방송 내 커스텀 메세지를 수신합니다.
              * @param callback (action: String 최대 50Byte, message: String Object 최대 500Byte, fromId: String)
              */

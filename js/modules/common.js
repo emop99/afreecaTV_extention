@@ -59,6 +59,20 @@ const oCommon = (() => {
         getByteSize: (str) => {
             return (new TextEncoder().encode(str)).length;
         },
+        /**
+         * 태그 문자열을 이스케이프 처리
+         * @param tagString {string}
+         * @returns {string}
+         */
+        tagEscape: function (tagString) {
+            let escapeText = '';
+            if (tagString) {
+                escapeText = tagString.replace(/\</g, '&lt;');
+                escapeText = escapeText.replace(/\>/g, '&gt;');
+                escapeText = escapeText.replace(/(\n|\r\n)/g, '<br>');
+            }
+            return escapeText;
+        },
     };
 })();
 

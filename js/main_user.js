@@ -9,6 +9,7 @@ const oMain = (() => {
     const RaffleListArray = [];
     const selectorMap = {
         mainDiv: '#main-div',
+        systemSetting: '.system-setting',
         raffleDetailInfoDiv: '#raffle-detail-info-div',
         raffleDetailInfoTitleHeaderDiv: '#raffle-detail-info-div .header-title h2',
         raffleListTbody: '#raffle-list-tbody',
@@ -57,7 +58,7 @@ const oMain = (() => {
 
                     return `<tr>
                                 <td>${raffleNo + 1}</td>
-                                <td>${raffleName}</td>
+                                <td>${oCommon.tagEscape(raffleName)}</td>
                                 <td>${headCount.toLocaleString('ko-KR')}</td>
                                 <td>
                                     ${status === RAFFLE_STATE.ING ? `<input class="form-check-input large-checkbox raffle-state-checkbox" type="checkbox" value="" checked>` :
@@ -76,7 +77,7 @@ const oMain = (() => {
             },
             columnInputDiv: (column, index) => {
                 return `<fieldset class="raffle-column-input-fieldset" id="form-setting-${index}">
-                            <legend>${column}</legend>
+                            <legend>${oCommon.tagEscape(column)}</legend>
                             <label for="form-setting-${index}">
                                 <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]" maxlength="20">
                             </label>
@@ -85,7 +86,7 @@ const oMain = (() => {
             winnerList: (index, nickName, grade) => {
                 return `<tr>
                             <td>${index}</td>
-                            <td>${nickName}</td>
+                            <td>${oCommon.tagEscape(nickName)}</td>
                             <td><p class="${userGradeClassMap[grade]}">${USER_GRADE_NAME[grade]}</p></td>
                         </tr>`;
             },
@@ -200,6 +201,20 @@ const oMain = (() => {
     const event = (() => {
         return {
             init: () => {
+                oAfreeca.api.initialization((authInfo, broadInfo, playerInfo) => {
+                    if (oConfig.isDev()) {
+                        console.log('initialization');
+                        console.log(authInfo);
+                        console.log(broadInfo);
+                        console.log(playerInfo);
+                        console.log('====================================');
+                    }
+
+                    if (authInfo.obscureUserId === null) {
+                        userInfo.isLogin = 0;
+                    }
+                });
+
                 // close button event
                 oCommon.addDelegateTarget(document, 'click', 'a.close', (e) => {
                     e.target.closest('.top-container').style.display = 'none';
@@ -218,6 +233,18 @@ const oMain = (() => {
                     render.raffleListRefresh();
                 }, 1000);
 
+                // 입력 최대 글자수 제한
+                oCommon.addDelegateTarget(document, 'keyup', selectorMap.raffleColumnInputFieldset, (e) => {
+                    e.target.value = e.target.value.slice(0, 20);
+                });
+                oCommon.addDelegateTarget(document, 'input', selectorMap.raffleColumnInputFieldset, (e) => {
+                    e.target.value = e.target.value.slice(0, 20);
+                });
+
+                // form submit 방지
+                oCommon.addDelegateTarget(document, 'submit', 'form', (e) => {
+                    e.preventDefault();
+                });
 
                 // 현황 체크박스 상태 변경 불가 처리
                 oCommon.addDelegateTarget(document, 'click', selectorMap.raffleStateCheckbox, (e) => {
@@ -228,6 +255,15 @@ const oMain = (() => {
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleDetailViewBtn}`, (e) => {
                     const {raffleNo, isParticipation} = e.target.dataset;
                     render.raffleDetailViewShowProc(raffleNo);
+                });
+
+                // 새로고침 버튼 클릭 이벤트
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, (event) => {
+                    document.querySelectorAll('.top-container').forEach((element) => {
+                        element.style.display = 'none';
+                    });
+                    document.querySelector(selectorMap.mainDiv).style.display = '';
+                    event.screenResetAndDataCall();
                 });
 
                 // 추첨 참여 버튼 클릭 이벤트
@@ -254,6 +290,7 @@ const oMain = (() => {
                             validate = false;
                             focusTarget = columnInputDiv;
                         }
+                        columnInputDiv.value = columnInputDiv.value.slice(0, 20);
                     });
 
                     if (!validate) {
@@ -471,10 +508,19 @@ const oMain = (() => {
                         event.screenResetAndDataCall();
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_INFO) {
                         userInfo = JSON.parse(message);
+                        userInfo.isLogin = 1;
                     }
                 });
 
                 oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
+                // 비로그인 인지 체크
+                setTimeout(() => {
+                    if (userInfo.isLogin === 0) {
+                        oModal.errorModalShow('로그인 후 사용 가능합니다.', () => {
+                            location.reload();
+                        });
+                    }
+                }, 1000);
             },
         };
     })();

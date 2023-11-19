@@ -85,7 +85,7 @@ const oMain = (() => {
                             <th class="">No.</th>
                             <th class="">닉네임</th>
                             <th class="">등급</th>
-                            ${raffleColumnList.map((column) => `<th>${column}</th>`).join('')}
+                            ${raffleColumnList.map((column) => `<th>${oCommon.tagEscape(column)}</th>`).join('')}
                         </tr>`;
             },
             raffleNotFinishDetailInfoTbody: (raffleInfo) => {
@@ -101,7 +101,7 @@ const oMain = (() => {
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}</td>
                             <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
+                            ${info.customColumn.map((column) => `<td class="">${oCommon.tagEscape(column)}</td>`).join('')}
                         </tr>`).join('')}`;
             },
             raffleFinishDetailInfoThead: (raffleInfo) => {
@@ -110,7 +110,7 @@ const oMain = (() => {
                             <th class="fix-column">No.</th>
                             <th class="">닉네임</th>
                             <th class="">등급</th>
-                            ${raffleColumnList.map((column) => `<th class="">${column}</th>`).join('')}
+                            ${raffleColumnList.map((column) => `<th class="">${oCommon.tagEscape(column)}</th>`).join('')}
                         </tr>`;
             },
             raffleFinishDetailInfoTbody: (raffleInfo) => {
@@ -119,7 +119,7 @@ const oMain = (() => {
                             <td class="">${index + 1}</td>
                             <td class="">${info.nickName}</td>
                             <td class=""><p class="${userGradeClassMap[info.grade]}">${USER_GRADE_NAME[info.grade]}</p></td>
-                            ${info.customColumn.map((column) => `<td class="">${column}</td>`).join('')}
+                            ${info.customColumn.map((column) => `<td class="">${oCommon.tagEscape(column)}</td>`).join('')}
                         </tr>`).join('')
             },
             raffleStartBtn: (raffleNo) => {
@@ -290,6 +290,19 @@ const oMain = (() => {
                     render.raffleListRefresh();
                 }, 1000);
 
+                // 입력 최대 글자수 제한
+                oCommon.addDelegateTarget(document, 'keyup', `${selectorMap.raffleAddDiv} input`, (e) => {
+                    e.target.value = e.target.value.slice(0, 20);
+                });
+                oCommon.addDelegateTarget(document, 'input', `${selectorMap.raffleAddDiv} input`, (e) => {
+                    e.target.value = e.target.value.slice(0, 20);
+                });
+
+                // form submit 방지
+                oCommon.addDelegateTarget(document, 'submit', 'form', (e) => {
+                    e.preventDefault();
+                });
+
                 // 추첨 신청 열 제거
                 oCommon.addDelegateTarget(document, 'click', `${selectorMap.columnDeleteBtn}`, (event) => {
                     if (document.querySelectorAll(selectorMap.raffleAddColumnInputDiv).length === 1) {
@@ -424,6 +437,12 @@ const oMain = (() => {
                     });
                     return;
                 }
+                if (raffleInputCount > 10) {
+                    oModal.errorModalShow('추첨 인원은 최대 10명까지만 가능합니다.', (e) => {
+                        document.querySelector(selectorMap.raffleInputCount).focus();
+                    });
+                    return;
+                }
                 if (raffleInputCount > participantsInfo.length) {
                     oModal.errorModalShow('추첨 인원이 참가자 수보다 많습니다.', (e) => {
                         document.querySelector(selectorMap.raffleInputCount).focus();
@@ -456,10 +475,10 @@ const oMain = (() => {
 
                 async function apiSend() {
                     api.raffleStateChange(raffleNo, RAFFLE_STATE.FINISH);
-                    await oCommon.sleep(50);
+                    await oCommon.sleep(100);
                     for (const winnersInfoRow of winnersInfo) {
                         api.raffleWinnerAlimSend(raffleNo, winnersInfoRow);
-                        await oCommon.sleep(50);
+                        await oCommon.sleep(100);
                     }
                 }
 

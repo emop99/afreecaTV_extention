@@ -43,6 +43,7 @@ const RAFFLE_WINNERS_INFO_DEFAULT_DATA_SET = {
 };
 
 const LOADING_USER_DEFAULT_INFO = {
+    isLogin: 0, // 로그인 여부
     userId: '', // 유저 아이디
     userNickname: '', // 유저 닉네임
     userStatus: {
