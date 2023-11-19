@@ -79,7 +79,7 @@ const oMain = (() => {
                 return `<fieldset class="raffle-column-input-fieldset" id="form-setting-${index}">
                             <legend>${oCommon.tagEscape(column)}</legend>
                             <label for="form-setting-${index}">
-                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]" maxlength="20">
+                                <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="raffle-column-input[]">
                             </label>
                         </fieldset>`;
             },
@@ -260,12 +260,13 @@ const oMain = (() => {
                 });
 
                 // 새로고침 버튼 클릭 이벤트
-                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, (event) => {
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, () => {
                     document.querySelectorAll('.top-container').forEach((element) => {
                         element.style.display = 'none';
                     });
                     document.querySelector(selectorMap.mainDiv).style.display = '';
                     event.screenResetAndDataCall();
+                    document.querySelector(selectorMap.systemSetting).style.display = 'none';
                 });
 
                 // 추첨 참여 버튼 클릭 이벤트

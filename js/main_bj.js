@@ -72,7 +72,7 @@ const oMain = (() => {
             columnInputDiv: () => {
                 return `<label for="form-setting" class="add-column-input-div">
                             <button class="remove-form-btn" type="button"><img src="./images/icon-remove.svg" alt="icon-remove"></button>
-                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]" maxlength="20">
+                            <input type="text" class="form-text-style" value="" placeholder="항목을 입력해주세요." name="add-raffle-column[]">
                         </label>`;
             },
             finishingText: () => {
