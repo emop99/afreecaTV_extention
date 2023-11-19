@@ -31,7 +31,7 @@ const oMain = (() => {
     };
 
     let userInfo = LOADING_USER_DEFAULT_INFO;
-
+    let loginCheckTryCnt = 0;
 
     const template = (() => {
         return {
@@ -146,7 +146,13 @@ const oMain = (() => {
                     return participant.userId === userInfo.userId;
                 }) : false;
 
-                if (selectRaffleInfo.status === RAFFLE_STATE.ING) {
+                if (selectRaffleInfo.status === RAFFLE_STATE.ING || selectRaffleInfo.status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
+                    if (!isParticipation && selectRaffleInfo.status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
+                        oModal.errorModalShow('신청 마감된 추첨입니다.', () => {
+                            event.screenResetAndDataCall();
+                        });
+                    }
+
                     document.querySelector(selectorMap.raffleParticipationDiv).style.display = '';
                     document.querySelector(selectorMap.mainDiv).style.display = 'none';
                     document.querySelector(selectorMap.raffleParticipationTitleHeaderDiv).innerHTML = `${selectRaffleInfo.raffleName}`;
@@ -157,14 +163,6 @@ const oMain = (() => {
 
                     if (isParticipation) {
                         event.loadInputData(selectRaffleInfo);
-                    }
-                } else if (selectRaffleInfo.status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
-                    if (isParticipation) {
-                        event.loadInputData(selectRaffleInfo);
-                    } else {
-                        oModal.errorModalShow('신청 마감된 추첨입니다.', () => {
-                            event.screenResetAndDataCall();
-                        });
                     }
                 } else if (selectRaffleInfo.status === RAFFLE_STATE.FINISH) {
                     // 당첨자 정보 불러오기
@@ -201,20 +199,6 @@ const oMain = (() => {
     const event = (() => {
         return {
             init: () => {
-                oAfreeca.api.initialization((authInfo, broadInfo, playerInfo) => {
-                    if (oConfig.isDev()) {
-                        console.log('initialization');
-                        console.log(authInfo);
-                        console.log(broadInfo);
-                        console.log(playerInfo);
-                        console.log('====================================');
-                    }
-
-                    if (authInfo.obscureUserId !== null) {
-                        userInfo.isLogin = 1;
-                    }
-                });
-
                 // close button event
                 oCommon.addDelegateTarget(document, 'click', 'a.close', (e) => {
                     e.target.closest('.top-container').style.display = 'none';
@@ -227,11 +211,29 @@ const oMain = (() => {
 
                 // 1초마다 추첨 리스트 갱신
                 setInterval(() => {
-                    if (RaffleListArray.length === 0) {
+                    if (loginCheckTryCnt >= 3 && !userInfo.userId) {
+                        oModal.errorModalShow('로그인 정보를 불러오지 못했습니다.', () => {
+                            location.reload();
+                        });
+                        return;
+                    }
+                    if (RaffleListArray.length === 0 && userInfo.userId) {
                         oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
                     }
                     render.raffleListRefresh();
-                }, 1000);
+                    if (!userInfo.userId) {
+                        loginCheckTryCnt++;
+                    } else {
+                        loginCheckTryCnt = 0;
+                    }
+                }, 500);
+
+                // WEPL UI 노출 여부 체크
+                oAfreeca.api.visibilityChanged((visible) => {
+                    if (visible) {
+                        oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
+                    }
+                });
 
                 // 입력 최대 글자수 제한
                 oCommon.addDelegateTarget(document, 'keyup', selectorMap.raffleColumnInputFieldset, (e) => {
@@ -508,19 +510,10 @@ const oMain = (() => {
                         event.screenResetAndDataCall();
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_INFO) {
                         userInfo = JSON.parse(message);
-                        userInfo.isLogin = 1;
                     }
                 });
 
                 oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
-                // 비로그인 인지 체크
-                setTimeout(() => {
-                    if (userInfo.isLogin === 0) {
-                        oModal.errorModalShow('로그인 후 사용 가능합니다.', () => {
-                            location.reload();
-                        });
-                    }
-                }, 3000);
             },
         };
     })();

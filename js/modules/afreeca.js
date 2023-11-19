@@ -69,6 +69,13 @@ const oAfreeca = (() => {
                 extensionSDK.handleInitialization(callBack);
             },
             /**
+             * 플레이어에서 확장 프로그램 UI가 숨겨지거나 다시 노출되는 경우 상태 여부를 수신합니다.
+             * @param callBack
+             */
+            visibilityChanged: (callBack) => {
+                extensionSDK.handleVisibilityChanged(callBack);
+            },
+            /**
              * 방송 내 커스텀 메세지를 수신합니다.
              * @param callback (action: String 최대 50Byte, message: String Object 최대 500Byte, fromId: String)
              */
