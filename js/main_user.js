@@ -260,7 +260,7 @@ const oMain = (() => {
                 });
 
                 // 새로고침 버튼 클릭 이벤트
-                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .delete-all`, () => {
+                oCommon.addDelegateTarget(document, 'click', `${selectorMap.systemSetting} .refresh`, () => {
                     document.querySelectorAll('.top-container').forEach((element) => {
                         element.style.display = 'none';
                     });
