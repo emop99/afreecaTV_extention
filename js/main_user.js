@@ -279,7 +279,8 @@ const oMain = (() => {
                         });
                         return;
                     }
-                    if (RaffleListArray[raffleNo].isParticipants !== 1 && RaffleListArray[raffleNo].status !== RAFFLE_STATE.ING) {
+                    if (!(RaffleListArray[raffleNo].participantsInfo && RaffleListArray[raffleNo].participantsInfo.some((participant) => participant.userId === userInfo.userId))
+                        && RaffleListArray[raffleNo].status === RAFFLE_STATE.DEAD_LINE_COMPLETED) {
                         oModal.errorModalShow('신청 마감된 추첨입니다.', () => {
                             event.screenResetAndDataCall();
                         });
