@@ -199,16 +199,6 @@ const oMain = (() => {
             init: () => {
                 api.raffleAllReset();
 
-                // 복사하기 버튼 클릭 이벤트
-                oCommon.addDelegateTarget(document, 'click', selectorMap.copyButton, (event) => {
-                    const text = event.target.parentNode.textContent;
-                    navigator.clipboard.writeText(text).then(() => {
-                        alert('복사되었습니다.');
-                    }).catch(err => {
-                        console.error('Unable to copy data:', err);
-                    });
-                });
-
                 // 추첨 추가하기 버튼 클릭 이벤트
                 document.querySelector(selectorMap.raffleAddShowBtn).addEventListener('click', () => {
                     if (RaffleListArray.length >= 5) {
