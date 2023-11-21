@@ -12,6 +12,7 @@ const CUSTOM_ACTION_CODE = {
     RAFFLE_ALL_RESET: 'RAFFLE_ALL_RESET', // 추첨 정보 전체 초기화
     LOADING_USER_INFO: 'LOADING_USER_INFO', // WEPL 실행 시 유저 정보 가져오기
     GET_DETAIL_RAFFLE_INFO: 'GET_DETAIL_RAFFLE_INFO', // 추첨 상세 정보 요청
+    GET_USER_INFO: 'GET_USER_INFO', // 유저 정보 요청
 };
 const ACTION_CODE = {
     JOIN: 'JOIN',
