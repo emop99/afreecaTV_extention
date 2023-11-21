@@ -1,4 +1,11 @@
-import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
+import {
+    LOADING_USER_DEFAULT_INFO,
+    oConfig,
+    RAFFLE_STATE,
+    USER_GRADE,
+    USER_GRADE_NAME,
+    WEPL_RUNNING_MESSAGE
+} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -207,7 +214,7 @@ const oMain = (() => {
                 });
 
                 // 최초 로딩 시 유저 정보 요청 처리
-                event.getUserInfo();
+                api.getUserInfo();
                 // 최초 로딩 시 추첨 리스트 요청 처리
                 event.screenResetAndDataCall();
 
@@ -415,9 +422,6 @@ const oMain = (() => {
                     render.raffleListRefresh();
                 }
             },
-            getUserInfo: () => {
-                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_USER_INFO, WEPL_RUNNING_MESSAGE);
-            },
             screenResetAndDataCall: () => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
                 document.querySelectorAll('.top-container').forEach((element) => {
@@ -460,6 +464,12 @@ const oMain = (() => {
              */
             getWInnersInfo: (raffleNo) => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_WINNER_INFO, JSON.stringify({raffleNo}));
+            },
+            /**
+             * 유저 정보 요청하기
+             */
+            getUserInfo: () => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_USER_INFO, WEPL_RUNNING_MESSAGE);
             },
         };
     })();
@@ -516,6 +526,7 @@ const oMain = (() => {
                         RaffleListArray.length = 0;
                         event.screenResetAndDataCall();
                     } else if (action === CUSTOM_ACTION_CODE.LOADING_USER_INFO) {
+                        console.log(message)
                         userInfo = JSON.parse(message);
                     }
                 });

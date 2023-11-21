@@ -597,15 +597,9 @@ const oMain = (() => {
              * WEPL 접속 유저 정보 전송
              * @param userInfoObj {userId: string, userNickname: string, userStatus: Object}
              */
-            userInfoSend: (userInfoObj) => {
-                const {userId, userNickname, userStatus} = userInfoObj;
-                console.log(userId);
-                console.log(userNickname);
-                console.log(userStatus);
+            userInfoSend: (userId) => {
                 oAfreeca.api.broadcastWhisper(oCommon.idEscape(userId), CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
                     userId: oCommon.idEscape(userId),
-                    userNickname,
-                    userStatus,
                 }));
             },
         };
@@ -625,7 +619,10 @@ const oMain = (() => {
 
                     // 유저 정보 요청시
                     if(action === CUSTOM_ACTION_CODE.GET_USER_INFO){
-                            api.userInfoSend(message);
+                        console.log("유저정보 요청 수신")
+                        console.log(message)
+                        console.log(fromId)
+                            api.userInfoSend(fromId);
                     }
 
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
