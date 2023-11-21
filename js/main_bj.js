@@ -1,4 +1,10 @@
-import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
+import {
+    oConfig,
+    RAFFLE_INFO_DEFAULT_DATA_SET,
+    RAFFLE_STATE,
+    USER_GRADE_NAME,
+    WEPL_RUNNING_MESSAGE
+} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -14,17 +20,18 @@ const oMain = (() => {
             tryInsertUserInfo: (userInfo) => {
                 let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userInfo.userId))
 
-                if (element == null){
-
-                    let newUserInfo = {
-                        userId : oCommon.idEscape(userInfo.userId),
-                        userNickname : userInfo.userNickname,
-                        userStatus : userInfo.userStatus,
-                        // insertTime : Date.now()
-                    }
-
-                    userInfoList.push(newUserInfo);
+                if (element != null){
+                    return;
                 }
+
+                let newUserInfo = {
+                    userId : oCommon.idEscape(userInfo.userId),
+                    userNickname : userInfo.userNickname,
+                    userStatus : userInfo.userStatus,
+                    // insertTime : Date.now()
+                }
+
+                userInfoList.push(newUserInfo);
             },
             tryGetUserInfoByUserId:(userId)=>{
                 let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userId));
@@ -42,7 +49,6 @@ const oMain = (() => {
                 return null;
             },
         }
-
     })();
 
     const selectorMap = {
