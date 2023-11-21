@@ -599,6 +599,9 @@ const oMain = (() => {
              */
             userInfoSend: (userInfoObj) => {
                 const {userId, userNickname, userStatus} = userInfoObj;
+                console.log(userId);
+                console.log(userNickname);
+                console.log(userStatus);
                 oAfreeca.api.broadcastWhisper(oCommon.idEscape(userId), CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
                     userId: oCommon.idEscape(userId),
                     userNickname,
