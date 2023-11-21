@@ -206,6 +206,8 @@ const oMain = (() => {
                     event.screenResetAndDataCall();
                 });
 
+                // 최초 로딩 시 유저 정보 요청 처리
+                event.getUserInfo();
                 // 최초 로딩 시 추첨 리스트 요청 처리
                 event.screenResetAndDataCall();
 
@@ -413,6 +415,9 @@ const oMain = (() => {
                     render.raffleListRefresh();
                 }
             },
+            getUserInfo: () => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_USER_INFO, WEPL_RUNNING_MESSAGE);
+            },
             screenResetAndDataCall: () => {
                 oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.LOADING_USER_RAFFLE_INFO, null);
                 document.querySelectorAll('.top-container').forEach((element) => {
@@ -515,7 +520,6 @@ const oMain = (() => {
                     }
                 });
 
-                oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
             },
         };
     })();

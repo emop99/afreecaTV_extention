@@ -619,6 +619,12 @@ const oMain = (() => {
                         console.log(`fromId : ${fromId}`);
                         console.log(`====================================================`);
                     }
+
+                    // 유저 정보 요청시
+                    if(action === CUSTOM_ACTION_CODE.GET_USER_INFO){
+                            api.userInfoSend(message);
+                    }
+
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         // 추첨 참가자 추가
                         const messageJson = JSON.parse(message);
@@ -674,23 +680,6 @@ const oMain = (() => {
                                 }),
                             }]));
                         }
-                    }
-                });
-
-                oAfreeca.api.chatListen((action, messageObj) => {
-                    if (oConfig.isDev()) {
-                        console.log(`oAfreeca.api.chatListen`);
-                        console.log(`action : ${action}`);
-                        console.log(`messageObj : ${messageObj}`);
-                        console.log(`====================================================`);
-                    }
-                    switch (action) {
-                        case ACTION_CODE.MESSAGE:
-                            if (messageObj.message === WEPL_RUNNING_MESSAGE) {
-                                // 닉네임 추출을 위해 WEPL 실행 메시지가 오면 정보 전송
-                                api.userInfoSend(messageObj);
-                            }
-                            break;
                     }
                 });
             },
