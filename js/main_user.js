@@ -14,6 +14,7 @@ const oMain = (() => {
         raffleDetailInfoTitleHeaderDiv: '#raffle-detail-info-div .header-title h2',
         raffleListTbody: '#raffle-list-tbody',
         raffleParticipationDiv: '#raffle-participation-div',
+        raffleParticipationFormParentDiv: '.form-apply-setting',
         raffleParticipationTitleHeaderDiv: '#raffle-participation-div .header-title h2',
         raffleStateCheckbox: '#raffle-list-tbody .raffle-state-checkbox',
         raffleDetailViewBtn: '#raffle-list-tbody .raffle-detail-view-btn',
@@ -244,6 +245,20 @@ const oMain = (() => {
                     e.target.value = e.target.value.slice(0, 20);
                 });
 
+                // 모바일 디바이스 경우 키보드로 버튼 미노출 되는 현상 방지
+                if (DEVICE === 'MO') {
+                    oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
+                        document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
+                        e.target.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
+                    });
+                    oCommon.addDelegateTarget(document, 'blur', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
+                        document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '';
+                    });
+                    oCommon.addDelegateTarget(document, 'focusout', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
+                        document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '';
+                    });
+                }
+
                 // form submit 방지
                 oCommon.addDelegateTarget(document, 'submit', 'form', (e) => {
                     e.preventDefault();
@@ -300,7 +315,9 @@ const oMain = (() => {
 
                     if (!validate) {
                         oModal.errorModalShow('항목을 입력해주세요.', () => {
+                            document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
                             focusTarget.focus();
+                            focusTarget.target.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
                         });
                         return;
                     }
