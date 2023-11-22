@@ -207,6 +207,7 @@ const oMain = (() => {
                 });
 
                 // 최초 로딩 시 추첨 리스트 요청 처리
+                event.userDataCall();
                 event.screenResetAndDataCall();
 
                 // 0.5초마다 추첨 리스트 갱신
@@ -222,6 +223,7 @@ const oMain = (() => {
                     }
                     render.raffleListRefresh();
                     if (!userInfo.userId) {
+                        oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
                         loginCheckTryCnt++;
                     } else {
                         loginCheckTryCnt = 0;
@@ -420,6 +422,9 @@ const oMain = (() => {
                 });
                 render.raffleList();
             },
+            userDataCall: () => {
+                oAfreeca.api.broadcastSend(CUSTOM_ACTION_CODE.GET_USER_INFO, null);
+            },
             loadInputData: (selectRaffleInfo) => {
                 document.querySelectorAll(selectorMap.raffleColumnInputFieldset).forEach((columnInputDiv, index) => {
                     const value = selectRaffleInfo.participantsInfo.find((participant) => {
@@ -514,8 +519,6 @@ const oMain = (() => {
                         userInfo = JSON.parse(message);
                     }
                 });
-
-                oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
             },
         };
     })();

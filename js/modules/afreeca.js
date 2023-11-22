@@ -135,7 +135,7 @@ const oAfreeca = (() => {
                     console.log(`message byte : ${oCommon.getByteSize(message)}`);
                     console.log(`=============================================`);
                 }
-                extensionSDK.chat.send('MESSAGE', message);
+                extensionSDK.chat.send("MESSAGE", message);
             },
         },
     };

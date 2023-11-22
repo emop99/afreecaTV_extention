@@ -1,4 +1,10 @@
-import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
+import {
+    oConfig,
+    RAFFLE_INFO_DEFAULT_DATA_SET,
+    RAFFLE_STATE,
+    USER_GRADE_NAME,
+    WEPL_RUNNING_MESSAGE
+} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -7,6 +13,44 @@ const oMain = (() => {
     'use strict';
 
     const RaffleListArray = [];
+    const userInfoList = [];
+
+    const userInfoUtil = (() => {
+        return{
+            tryInsertUserInfo: (userInfo) => {
+                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userInfo.userId))
+
+                if (element != null){
+                    return;
+                }
+
+                let newUserInfo = {
+                    userId : oCommon.idEscape(userInfo.userId),
+                    userNickname : userInfo.userNickname,
+                    userStatus : userInfo.userStatus,
+                    // insertTime : Date.now()
+                }
+
+                userInfoList.push(newUserInfo);
+            },
+            tryGetUserInfoByUserId:(userId)=>{
+                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userId));
+
+                if (element != null){
+                    let index = userInfoList.findIndex(e => e.userId === oCommon.idEscape(userId));
+
+                    if (index !== -1) {
+                        let removedElement = userInfoList.splice(index, 1);
+
+                        return removedElement[0];
+                    }
+
+                }
+                return null;
+            },
+        }
+    })();
+
     const selectorMap = {
         mainDiv: '#main-div',
         systemSetting: '.system-setting',
@@ -589,6 +633,7 @@ const oMain = (() => {
              */
             userInfoSend: (userInfoObj) => {
                 const {userId, userNickname, userStatus} = userInfoObj;
+
                 oAfreeca.api.broadcastWhisper(oCommon.idEscape(userId), CUSTOM_ACTION_CODE.LOADING_USER_INFO, JSON.stringify({
                     userId: oCommon.idEscape(userId),
                     userNickname,
@@ -608,6 +653,14 @@ const oMain = (() => {
                         console.log(`message : ${message}`);
                         console.log(`fromId : ${fromId}`);
                         console.log(`====================================================`);
+                    }
+                    if (action===CUSTOM_ACTION_CODE.GET_USER_INFO){
+                        const userInfo = userInfoUtil.tryGetUserInfoByUserId(fromId);
+
+                        if (userInfo !=null){
+                            api.userInfoSend(userInfo);
+                        }
+
                     }
                     if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         // 추첨 참가자 추가
@@ -675,6 +728,14 @@ const oMain = (() => {
                         console.log(`====================================================`);
                     }
                     switch (action) {
+                        case ACTION_CODE.IN:
+                            const userList = messageObj.userList;
+
+                            userList.forEach((e)=>{
+                                userInfoUtil.tryInsertUserInfo(e)
+                            })
+                            break;
+
                         case ACTION_CODE.MESSAGE:
                             if (messageObj.message === WEPL_RUNNING_MESSAGE) {
                                 // 닉네임 추출을 위해 WEPL 실행 메시지가 오면 정보 전송
