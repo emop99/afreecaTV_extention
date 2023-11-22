@@ -41,6 +41,7 @@ const oMain = (() => {
         1: 'badge-gray-1',
         2: 'badge-primary-2',
         3: 'badge-primary-1',
+        4: 'badge-primary-1',
     };
 
     const template = (() => {
