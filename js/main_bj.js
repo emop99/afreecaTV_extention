@@ -450,7 +450,7 @@ const oMain = (() => {
 
                 for (let i = 0; i < raffleInputCount; i++) {
                     while (true) {
-                        const randomNumber = Math.floor(Math.random() * raffleCheckCount);
+                        const randomNumber = Math.floor(Math.random() * participantsInfo.length);
                         if (checkParticipants.hasOwnProperty(randomNumber)) {
                             const index = checkParticipants[randomNumber].value;
                             // 이미 같은 데이터가 존재하는지

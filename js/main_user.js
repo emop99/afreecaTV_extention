@@ -28,6 +28,7 @@ const oMain = (() => {
         1: 'badge-gray-1',
         2: 'badge-primary-2',
         3: 'badge-primary-1',
+        4: 'badge-primary-1',
     };
 
     let userInfo = LOADING_USER_DEFAULT_INFO;
@@ -308,7 +309,7 @@ const oMain = (() => {
                         raffleNo: Number(raffleNo),
                         userId: userInfo.userId,
                         nickName: userInfo.userNickname,
-                        grade: userInfo.userStatus.isTopFan ? USER_GRADE.VIP : userInfo.userStatus.isFan ? USER_GRADE.FAN : USER_GRADE.NORMAL,
+                        grade: oCommon.getGradeInfo(userInfo.userStatus.isManager, userInfo.userStatus.isTopFan, userInfo.userStatus.isFan),
                         customColumn: Array.from(document.querySelectorAll(`${selectorMap.raffleInputParticipationColumnDiv} input`)).map((columnInputDiv) => {
                             return columnInputDiv.value;
                         }),

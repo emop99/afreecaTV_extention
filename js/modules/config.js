@@ -8,12 +8,14 @@ const USER_GRADE = {
     NORMAL: 1,
     FAN: 2,
     VIP: 3,
+    MANAGER: 4,
 };
 
 const USER_GRADE_NAME = {
     1: '일반',
     2: '팬',
     3: '열혈',
+    4: '매니저',
 };
 
 const RAFFLE_INFO_DEFAULT_DATA_SET = {

@@ -1,3 +1,5 @@
+import {USER_GRADE} from "./config.js";
+
 const oCommon = (() => {
     'use strict';
 
@@ -72,6 +74,23 @@ const oCommon = (() => {
                 escapeText = escapeText.replace(/(\n|\r\n)/g, '<br>');
             }
             return escapeText;
+        },
+        /**
+         * 유저 등급 정보 가져오기
+         * @param isManager {boolean}
+         * @param isTopFan {boolean}
+         * @param isFan {boolean}
+         * @return {number}
+         */
+        getGradeInfo: (isManager, isTopFan, isFan) => {
+            if (isManager) {
+                return USER_GRADE.MANAGER;
+            } else if (isTopFan) {
+                return USER_GRADE.VIP;
+            } else if (isFan) {
+                return USER_GRADE.FAN;
+            }
+            return USER_GRADE.NORMAL;
         },
     };
 })();

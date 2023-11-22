@@ -168,6 +168,31 @@ input::-webkit-search-results-decoration {
     margin-right: 10px;
 }
 
+/* ####################### common-table-header ####################### */
+.common-table .common-table-header {
+    margin-top: 40px;
+    padding-bottom: 10px;
+    width: 100%;
+    height: 60px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.common-table-header .table-header-title {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.common-table-header .table-header-title h2 {
+    font-family: 'Pretendard-SemiBold';
+    color: #000;
+    text-align: center;
+    font-size: 22px;
+}
+
 /* ####################### common-table ####################### */
 .common-table {
     width: 100%;
