@@ -212,7 +212,7 @@ const oMain = (() => {
 
                 // 0.5초마다 추첨 리스트 갱신
                 setInterval(() => {
-                    if (loginCheckTryCnt >= 3 && !userInfo.userId) {
+                    if (loginCheckTryCnt >= 4 && !userInfo.userId) {
                         oModal.errorModalShow('로그인 정보를 불러오지 못했습니다.', () => {
                             location.reload();
                         });
@@ -223,7 +223,13 @@ const oMain = (() => {
                     }
                     render.raffleListRefresh();
                     if (!userInfo.userId) {
-                        oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
+                        if(loginCheckTryCnt >= 3){
+                            oAfreeca.api.chatSend(WEPL_RUNNING_MESSAGE);
+                            (function () {
+                                var start = new Date().getTime();
+                                while (new Date().getTime() < start + 500);
+                            })();
+                        }
                         loginCheckTryCnt++;
                     } else {
                         loginCheckTryCnt = 0;

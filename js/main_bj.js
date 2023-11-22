@@ -15,42 +15,6 @@ const oMain = (() => {
     const RaffleListArray = [];
     const userInfoList = [];
 
-    const userInfoUtil = (() => {
-        return{
-            tryInsertUserInfo: (userInfo) => {
-                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userInfo.userId))
-
-                if (element != null){
-                    return;
-                }
-
-                let newUserInfo = {
-                    userId : oCommon.idEscape(userInfo.userId),
-                    userNickname : userInfo.userNickname,
-                    userStatus : userInfo.userStatus,
-                    // insertTime : Date.now()
-                }
-
-                userInfoList.push(newUserInfo);
-            },
-            tryGetUserInfoByUserId:(userId)=>{
-                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userId));
-
-                if (element != null){
-                    let index = userInfoList.findIndex(e => e.userId === oCommon.idEscape(userId));
-
-                    if (index !== -1) {
-                        let removedElement = userInfoList.splice(index, 1);
-
-                        return removedElement[0];
-                    }
-
-                }
-                return null;
-            },
-        }
-    })();
-
     const selectorMap = {
         mainDiv: '#main-div',
         systemSetting: '.system-setting',
@@ -653,6 +617,40 @@ const oMain = (() => {
         };
     })();
 
+    const userInfoUtil = (() => {
+        return{
+            tryInsertUserInfo: (userInfo) => {
+                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userInfo.userId))
+
+                if (element != null){
+                    return;
+                }
+
+                userInfoList.push({
+                    userId : oCommon.idEscape(userInfo.userId),
+                    userNickname : userInfo.userNickname,
+                    userStatus : userInfo.userStatus,
+                    // insertTime : Date.now()
+                });
+            },
+            tryGetUserInfoByUserId:(userId)=>{
+                let element = userInfoList.find(e=>e.userId === oCommon.idEscape(userId));
+
+                if (element != null){
+                    let index = userInfoList.findIndex(e => e.userId === oCommon.idEscape(userId));
+
+                    if (index !== -1) {
+                        let removedElement = userInfoList.splice(index, 1);
+
+                        return removedElement[0];
+                    }
+
+                }
+                return null;
+            },
+        }
+    })();
+
     const messageListener = (() => {
         return {
             init: () => {
@@ -664,15 +662,14 @@ const oMain = (() => {
                         console.log(`fromId : ${fromId}`);
                         console.log(`====================================================`);
                     }
-                    if (action===CUSTOM_ACTION_CODE.GET_USER_INFO){
+
+                    if (action===CUSTOM_ACTION_CODE.GET_USER_INFO) {
                         const userInfo = userInfoUtil.tryGetUserInfoByUserId(fromId);
 
-                        if (userInfo !=null){
+                        if (userInfo != null) {
                             api.userInfoSend(userInfo);
                         }
-
-                    }
-                    if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
+                    } else if (action === CUSTOM_ACTION_CODE.ADD_RAFFLE_PARTICIPANT) {
                         // 추첨 참가자 추가
                         const messageJson = JSON.parse(message);
                         const {raffleNo, nickName, grade, customColumn} = messageJson;
@@ -742,8 +739,8 @@ const oMain = (() => {
                             const userList = messageObj.userList;
 
                             userList.forEach((e)=>{
-                                userInfoUtil.tryInsertUserInfo(e)
-                            })
+                                userInfoUtil.tryInsertUserInfo(e);
+                            });
                             break;
 
                         case ACTION_CODE.MESSAGE:
