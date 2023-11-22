@@ -28,7 +28,7 @@ const oMain = (() => {
         1: 'badge-gray-1',
         2: 'badge-primary-2',
         3: 'badge-primary-1',
-        4: 'badge-primary-1',
+        4: 'badge-accent-1',
     };
 
     let userInfo = LOADING_USER_DEFAULT_INFO;

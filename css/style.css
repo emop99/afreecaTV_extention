@@ -96,6 +96,14 @@ input::-webkit-search-results-decoration {
     display: inline-block;
 }
 
+.badge-accent-1 {
+    background-color: #EF5DA8;
+    color: #fff;
+    border-radius: 4px;
+    padding: 5px;
+    display: inline-block;
+}
+
 .badge-gray-1 {
     background-color: #eee;
     color: #777;
@@ -456,8 +464,13 @@ input::-webkit-search-results-decoration {
 
 
 /* table */
+.application-list-bj .common-table .badge-primary-1,
+.application-list-bj .common-table .badge-gray-1 {
+    padding: 5px 11px 5px 11px;
+}
+
 .application-list-bj .common-table .badge-primary-2 {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 16px 5px 16px;
 }
 
 .application-list-bj .common-table {
@@ -481,7 +494,7 @@ input::-webkit-search-results-decoration {
 }
 
 .application-list-bj .common-table th:nth-child(4) {
-    width: 70px;
+    width: 80px;
 }
 
 .application-list-bj .common-table th:nth-child(5) {
@@ -514,8 +527,13 @@ input::-webkit-search-results-decoration {
 
 /* ####################### random-lottery-bj ####################### */
 /* table */
+.random-lottery-bj .common-table .badge-primary-1,
+.random-lottery-bj .common-table .badge-gray-1 {
+    padding: 5px 11px 5px 11px;
+}
+
 .random-lottery-bj .common-table .badge-primary-2 {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 16px 5px 16px;
 }
 
 .random-lottery-bj .common-table {
@@ -535,7 +553,7 @@ input::-webkit-search-results-decoration {
 }
 
 .random-lottery-bj .common-table th:nth-child(3) {
-    width: 70px;
+    width: 80px;
 }
 
 .random-lottery-bj .common-table th:nth-child(4) {
@@ -656,8 +674,13 @@ input::-webkit-search-results-decoration {
 
 /* ####################### lottery-result-user ####################### */
 /* table */
+.lottery-result-user .common-table .badge-primary-1,
+.lottery-result-user .common-table .badge-gray-1 {
+    padding: 5px 11px 5px 11px;
+}
+
 .lottery-result-user .common-table .badge-primary-2 {
-    padding: 5px 10px 5px 10px;
+    padding: 5px 16px 5px 16px;
 }
 
 .lottery-result-user .lottery-result {
@@ -685,15 +708,15 @@ input::-webkit-search-results-decoration {
 }
 
 .lottery-result-user .common-table th:nth-child(1) {
-    width: 90px;
+    width: 20%;
 }
 
 .lottery-result-user .common-table th:nth-child(2) {
-    width: 154px;
+    width: 60%;
 }
 
 .lottery-result-user .common-table th:nth-child(3) {
-    width: 90px;
+    width: 20%;
 }
 
 

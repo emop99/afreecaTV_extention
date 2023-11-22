@@ -1,4 +1,4 @@
-import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
+import {oConfig, RAFFLE_INFO_DEFAULT_DATA_SET, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js';
 import oCommon from "./modules/common.js";
 import {ACTION_CODE, CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js";
 import oModal from "./modules/modal.js";
@@ -41,7 +41,7 @@ const oMain = (() => {
         1: 'badge-gray-1',
         2: 'badge-primary-2',
         3: 'badge-primary-1',
-        4: 'badge-primary-1',
+        4: 'badge-accent-1',
     };
 
     const template = (() => {
