@@ -682,6 +682,10 @@ const oMain = (() => {
                                 api.userInfoSend(messageObj);
                             }
                             break;
+                        case ACTION_CODE.USERSTATUS_CHANGED:
+                            // 유저 상태 변경 시 정보 전송
+                            api.userInfoSend(messageObj);
+                            break;
                     }
                 });
             },
