@@ -1,7 +1,7 @@
-import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js?v=CACHE_1.0.1';
-import oCommon from "./modules/common.js?v=CACHE_1.0.1";
-import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js?v=CACHE_1.0.1";
-import oModal from "./modules/modal.js?v=CACHE_1.0.1";
+import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js?v=CACHE_1.0.2';
+import oCommon from "./modules/common.js?v=CACHE_1.0.2";
+import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js?v=CACHE_1.0.2";
+import oModal from "./modules/modal.js?v=CACHE_1.0.2";
 
 const oMain = (() => {
     'use strict';
