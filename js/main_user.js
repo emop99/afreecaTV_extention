@@ -1,7 +1,7 @@
-import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js?v=CACHE_1.0.0';
-import oCommon from "./modules/common.js?v=CACHE_1.0.0";
-import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js?v=CACHE_1.0.0";
-import oModal from "./modules/modal.js?v=CACHE_1.0.0";
+import {LOADING_USER_DEFAULT_INFO, oConfig, RAFFLE_STATE, USER_GRADE, USER_GRADE_NAME, WEPL_RUNNING_MESSAGE} from './modules/config.js?v=CACHE_1.0.1';
+import oCommon from "./modules/common.js?v=CACHE_1.0.1";
+import {CUSTOM_ACTION_CODE, oAfreeca} from "./modules/afreeca.js?v=CACHE_1.0.1";
+import oModal from "./modules/modal.js?v=CACHE_1.0.1";
 
 const oMain = (() => {
     'use strict';
@@ -248,7 +248,9 @@ const oMain = (() => {
                 // 모바일 디바이스 경우 키보드로 버튼 미노출 되는 현상 방지
                 if (DEVICE === 'MO') {
                     oCommon.addDelegateTarget(document, 'click', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
-                        document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
+                        if (oConfig.getDeviceType() === 'IOS') {
+                            document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
+                        }
                         e.target.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
                     });
                     oCommon.addDelegateTarget(document, 'blur', `${selectorMap.raffleColumnInputFieldset} input`, (e) => {
@@ -315,7 +317,9 @@ const oMain = (() => {
 
                     if (!validate) {
                         oModal.errorModalShow('항목을 입력해주세요.', () => {
-                            document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
+                            if (oConfig.getDeviceType() === 'IOS') {
+                                document.querySelector(selectorMap.raffleParticipationFormParentDiv).style.height = '95px';
+                            }
                             focusTarget.focus();
                             focusTarget.target.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"});
                         });

@@ -68,13 +68,26 @@ const oConfig = (() => {
     'use strict';
 
     let isDev = false;
+    let deviceType = '';
 
     return {
         init: () => {
             isDev = (window.location.hostname === 'localhost' || window.location.hostname === 'extensiont.afreecatv.com');
+
+            const userAgent = navigator.userAgent.toLowerCase();
+            if (userAgent.indexOf('android') > -1) {
+                deviceType = 'ANDROID';
+            } else if (userAgent.indexOf('iphone') > -1 || userAgent.indexOf('ipad') > -1 || userAgent.indexOf('ipod') > -1) {
+                deviceType = 'IOS';
+            } else {
+                deviceType = 'PC';
+            }
         },
         isDev: () => {
             return isDev;
+        },
+        getDeviceType: () => {
+            return deviceType;
         },
     };
 })();
